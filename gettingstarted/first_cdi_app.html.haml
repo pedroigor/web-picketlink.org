@@ -11,9 +11,9 @@ title: First PicketLink CDI Application
           %h2 First PicketLink CDI Application
           %p
             This guide will show you how to secure a very simple application using PicketLink.
-            It will cover some core concepts and make easier to you understand how those concepts are applied in a project.
+            It will cover some core concepts and make it easier for you to understand how those concepts are applied in a project.
           %p
-            It will show you how add to your application the following capabilities:
+            It will show you how to add the following capabilities to your application:
             %ul
               %li Identity Management
               %li Authentication and Logout
@@ -27,14 +27,14 @@ title: First PicketLink CDI Application
               %li Maven 3.0.0 or newer
               %li JBoss Enterprise Application Platform 6 or WildFly Servers.
           .well
-            <b>You need some Apache Maven background to follow this guide. If you're not familiar with it, please visit this
+            <b>You need some experience with Apache Maven to follow this guide. If you're not familiar with Maven, please visit this
             %a(href="http://maven.apache.org/") site
             first.</b>
       .row-fluid
         .span12
           %h3 Create a Maven Web Application Project
           %p
-            There a lot of ways of doing that. One of them is using a Maven Archetype to generate the project, as follows:
+            There are a lot of ways of doing this. One of them is by using a Maven Archetype to generate the project, as follows:
             .well
               mvn archetype:generate -DgroupId=org.picketlink.tutorial -DartifactId=picketlink-app -DarchetypeArtifactId=maven-archetype-webapp
           %p
@@ -65,7 +65,7 @@ title: First PicketLink CDI Application
               &nbsp;&nbsp;&nbsp;&nbsp;&lt;/build&gt;
               &lt;/project&gt;
           %p
-            To check if your project is properly configured with Maven, execute the following command at the project's root folder:
+            To check if your project is properly configured with Maven, execute the following command in the project's root folder:
             .well
               mvn clean install
             %p
@@ -75,15 +75,15 @@ title: First PicketLink CDI Application
                 [INFO] BUILD SUCCESS<br/>
                 [INFO] ------------------------------------------------------------------------
             %p
-              And you must also have a WAR package at <b>target/picketlink-app.war</b>.
+              You should also confirm that you have a WAR package at <b>target/picketlink-app.war</b>.
       .row-fluid
         .span12
           %h3 Configuring PicketLink Dependencies
           %p
-            Now that your project is created you can add the PicketLink Dependencies to your project. For that we'll use the PicketLink Bill of Materials(BOM), which
-            provides a more clean way to configure the dependencies to your project.
+            Now that your project is created you can add the PicketLink Dependencies to it. For this we'll use the PicketLink Bill of Materials(BOM), which
+            provides a simpler way to configure the dependencies of your project.
           %p
-            To configure the dependencies, add the following configuration to the pom.xml:
+            To configure the dependencies, add the following configuration to pom.xml:
             %pre
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;properties&gt;
               &nbsp;&nbsp;&nbsp;&nbsp;&lt;version.picketlink.javaee.bom&gt;2.6.0.CR1&lt;/version.picketlink.javaee.bom&gt;
@@ -115,20 +115,20 @@ title: First PicketLink CDI Application
               &nbsp;&nbsp;&nbsp;&nbsp;&lt;/dependency&gt;
               &lt;/dependencies&gt;
           %p
-            The configuration above will make the PicketLink API available to your project, so you can use it to build your classes later.
+            The above configuration will make the PicketLink API libraries available to your project, so you can use them to build your classes later.
       .row-fluid
         .span12
           %h3 Configuring CDI and JSF
           %p
-            This application is CDI and JSF based. Given that, we need to enable both technologies to the project.
+            This application is CDI and JSF based. Given that, we need to enable both technologies for the project.
           %p
-            To enable CDI, you just need to add a file <b>src/main/webapp/WEB-INF/beans.xml</b> with the following content:
+            To enable CDI, you just need to add a <b>src/main/webapp/WEB-INF/beans.xml</b> marker file with the following content:
             %pre
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- Marker file indicating CDI should be enabled --&gt;
               &lt;beans xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/beans_1_0.xsd"&gt;
               &lt;/beans&gt;
           %p
-            For JSF, you just need to add a file <b>src/main/webapp/WEB-INF/faces-config.xml</b> with the following content:
+            For JSF, you just need to add a <b>src/main/webapp/WEB-INF/faces-config.xml</b> marker file with the following content:
             %pre
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- Marker file indicating JSF should be enabled --&gt;
               &lt;faces-config version="2.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"&gt;
@@ -165,21 +165,21 @@ title: First PicketLink CDI Application
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
             &nbsp;&nbsp;}
           .well
-            This is a very simple bean. Fields are not being validated to highlight only the important code for this guide. Don't forget to validate all fields when working with a real world app !
+            This is a very simple bean. Fields are not being validated to highlight only the important bits of code for the sake of this guide. Don't forget to validate all fields when working with a real world app !
           %p
-            Basically, this bean is receiving some input from a JSF page (which we'll create in a few seconds) and storing a new user to a <b>Identity Store</b>. An Identity Store is a repository where
-            all identity data is located, such as users, roles, groups, credentials, etc. When you don't provide any configuration to PicketLink IDM, it will use by default a File-based Identity Store. This
+            Basically, this bean receives some input from a JSF page (which we'll create next) and stores a new user in an <b>Identity Store</b>. An Identity Store is a repository where
+            all identity data is located, such as users, roles, groups, credentials, etc. When you don't provide any configuration for PicketLink IDM, it by default uses a File-based Identity Store. This
             is very handy for demos, during development and testing. But when doing things for real, you will probably prefer a LDAP or a Database as your Identity Store.
           %p
             PicketLink supports differents identity stores, providing out-of-the-box implementations using LDAP and JPA. For more information about how to configure PicketLink IDM, please check our
             %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html_single/#picketlink-idm-configuration")documentation.
           %p
-            Another important thing to consider in that bean is the usage of the <b>IdentityManager</b>. This bean is used to manage identity objects within the scope of a partition.
+            Another important thing to consider in this bean is the usage of the <b>IdentityManager</b>. This bean is used to manage identity objects within the scope of a partition.
             Some examples of identity objects are users, groups and roles, although PicketLink is not limited to just these.
             Besides providing the standard set of CRUD methods for managing and locating identity objects, the IdentityManager interface also defines methods for managing credentials and for creating identity queries which may be used to locate identities by their properties and attributes.
           %p
-            You may also notice that that bean is also creating a credential for the user. In this case we're creating a Username/Password credential type, although PicketLink is not limited to just this.
-            You can even provide your credential types and handlers. Beside that, PicketLink also provides some built-in credential types for DIGEST, Two-Factor Authentication and X509 Certificates.
+            You may also notice that the bean also creates a credential for the user. In this case we're creating a Username/Password credential type, although PicketLink is not limited to just this.
+            You can even provide your credential types and handlers. PicketLink also provides built-in support for other credential types such as DIGEST, Two-Factor Authentication and X509 Certificates.
           %p
             For more information about PicketLink Identity Manager API, please check our
             %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html_single/#picketlink-idm-overview")documentation.
@@ -187,9 +187,9 @@ title: First PicketLink CDI Application
         .span12
           %h3 Creating the User Registration JSF Page
           %p
-            If you're familiar with JSF then no secrets here. We're just binding some form fields to the previously created <b>UserRegistration</b> bean.
+            If you're familiar with JSF then there's no secrets here. We're just binding some form fields to the previously created <b>UserRegistration</b> bean.
           %p
-            You need to add this page at the following location <b>src/main/webapp/signup.xhtml</b>.
+            You need to add the following page at this location: <b>src/main/webapp/signup.xhtml</b>.
           %pre
             .plain
               &lt;html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"&gt;
@@ -210,7 +210,7 @@ title: First PicketLink CDI Application
         .span12
           %h3 Deploying the Application
           %p
-            To deploy the application you just need a few steps. First, create a WAR package by running the following command at the project's root directory.
+            Deploying the application takes just a few simple steps. First, create a WAR package by running the following command in the project's root directory.
           .well
             mvn clean package
           %p
@@ -224,7 +224,7 @@ title: First PicketLink CDI Application
         .span12
           %h3 User Authentication
           %p
-            Now that you're application is registering new users you can authenticated them based on the information they provided at the registration page.
+            Now that your application is registering new users you can authenticate them based on the information they provide on the registration page.
           %p
             That said, let's create a login page.
           %pre
@@ -248,8 +248,8 @@ title: First PicketLink CDI Application
             &lt;/body&gt;
             &lt;/html&gt;
           %p
-            This is a very simple JSF page, divided in two fragmets: one public section and another for authenticated users. Both fragments are rendered depending on the
-            return value of the <b>identity.loggedIn</b>, which returns true or false if the user is authenticated or not.
+            This is a very simple JSF page, divided into two fragments: one unprotected/public section and another section for authenticated users. Both fragments are rendered depending on the
+            return value of <b>identity.loggedIn</b>, which returns true or false indicating whether the current user is authenticated or not.
           %p
             PicketLink has a central component called the <b>Identity</b> bean. The Identity bean (which can be found in the org.picketlink package) is central to PicketLink's security API.
             This bean represents the authenticated user for the current session, and provides many useful methods for controlling the authentication process and querying the user's assigned privileges.
@@ -257,12 +257,12 @@ title: First PicketLink CDI Application
             For more information about the Identity bean, check our
             %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e125")documentation.
           %p
-            This bean is ready to be referenced from JSF pages like we did using EL (@Named("identity")) and also for injection on others CDI beans using the @Inject annotation. In our simple application, we don't need to create
-            a authentication bean just to wrap the Identity bean, but just use it directly from a JSF page. When using one or another approach depends on your needs. If you want to perform some additional logic before
-            and after authenticating users, you should definetly create a bean and inject the Identity bean to have more control over the authentication process.
+            This bean is able to be referenced directly from JSF pages using EL (@Named("identity")) and also able to be injected into other CDI beans using the @Inject annotation. In our simple application, we don't need to create
+            an authentication bean just to wrap the Identity bean, we can just use it directly from the JSF page. The approach you decide to take depends on your requirements. If you want to perform some additional logic before
+            and after authenticating users, you should create a bean and inject the Identity bean in order to gain more control over the authentication process.
           %p
-            The credentials are provided by another PicketLink built-in component, the <b>DefaultLoginCredentials</b>. Like the Identity bean, it can also be referenced directly from JSF pages as well injected in other beans
-            using the @Inject annotation. In the page above we are referencing the DefaultLoginCredentials bean directly to bind both userId and password.
+            The credentials are provided by another PicketLink built-in component, the <b>DefaultLoginCredentials</b>. Like the Identity bean, it can also be referenced directly from JSF pages as well as being injected into other beans
+            using the @Inject annotation. In the page above we are referencing the DefaultLoginCredentials bean directly in order to bind both the userId and password values.
           %pre
             .plain
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Username: &lt;h:inputText value="{<b>loginCredentials.userId</b>}"/&gt;&lt;br/&gt;
@@ -273,16 +273,16 @@ title: First PicketLink CDI Application
             For more information about the DefaultLoginCredentials bean, check our
             %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e320")documentation.
           %p
-            Now that you know how to check if an user is authenticated and also how to set the credentials to start the authentication process, let's take a look on how users are authenticated.
+            Now that you know how to check if a user is authenticated and how to set their credentials and invoke the authentication process, let's take a look at how users are authenticated.
             The page above defines a login button which is configured to invoke the <b>identity.login()</b> method. The login() method is the primary point of entry for the authentication process.
             Invoking this method will cause PicketLink to attempt to authenticate the user based on the credentials that they have provided.
           %p
             When you invoke the identity.login() method, the Identity bean will invoke the methods of the active <b>Authenticator</b> to perform user authentication using the credentials provided by the DefaultLoginCredentials bean.
-            So far we didn't see any reference or configuration for the Authenticator, and this is fine. The reason is that PicketLink provides a built-in implementation that uses the PicketLink IDM API to retrieve users information and perform the authentication.
+            So far we haven't seen any reference or configuration for the Authenticator, and this is fine. The reason is that PicketLink provides a built-in implementation that uses the PicketLink IDM API to retrieve users information and perform the authentication.
             Given that, we're ready to authenticate any user created by the previously created UserRegistration bean, as it is using the PicketLink IDM API to store them.
 
           %p
-            You're not tied to use always the same Authenticator, you can provide your own implementations and code the authentication process the way you want. For more details, take a look at our
+            You're not forced to use always the same Authenticator, it is also possible to provide your own implementation and code the authentication process the way you want. For more details, take a look at our
             %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e249")documentation.
             You can even support multiple authentication processes by providing
             %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e285")multiple authenticators.
