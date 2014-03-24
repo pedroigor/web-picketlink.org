@@ -196,10 +196,10 @@ title: First PicketLink CDI Application
               &lt;body&gt;
               &nbsp;&nbsp;&nbsp;&nbsp;Please, enter your information:&lt;br/&gt;&lt;br/&gt;
               &nbsp;&nbsp;&nbsp;&nbsp;&lt;h:form&gt;
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;First Name: &lt;h:inputText value="{userRegistration.firstName}"/&gt;&lt;br/&gt;
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Last Name: &lt;h:inputText value="{userRegistration.lastName}"/&gt;&lt;br/&gt;
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Username: &lt;h:inputText value="{userRegistration.loginName}"/&gt;&lt;br/&gt;
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password: &lt;h:inputSecret value="{userRegistration.password}"/&gt;&lt;br/&gt;
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;First Name: &lt;h:inputText value="{userRegistration.firstName}" required="true"/&gt;&lt;br/&gt;
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Last Name: &lt;h:inputText value="{userRegistration.lastName}" required="true"/&gt;&lt;br/&gt;
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Username: &lt;h:inputText value="{userRegistration.loginName}" required="true"/&gt;&lt;br/&gt;
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password: &lt;h:inputSecret value="{userRegistration.password}" required="true"/&gt;&lt;br/&gt;
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;h:commandButton value="Finish" action="{userRegistration.register}"/&gt;
               &nbsp;&nbsp;&nbsp;&nbsp;&lt;/h:form&gt;
               &lt;/body&gt;
@@ -234,8 +234,8 @@ title: First PicketLink CDI Application
             &nbsp;&nbsp;&nbsp;&nbsp;&lt;ui:fragment rendered="<b>{not identity.loggedIn}</b>"&gt;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Please, enter your credentials:&lt;br/&gt;&lt;br/&gt;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;h:form&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Username: &lt;h:inputText value="{<b>loginCredentials.userId</b>}"/&gt;&lt;br/&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password: &lt;h:inputSecret value="{<b>loginCredentials.password</b>}"/&gt;&lt;br/&gt;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Username: &lt;h:inputText value="{<b>loginCredentials.userId</b>}" required="true"/&gt;&lt;br/&gt;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password: &lt;h:inputSecret value="{<b>loginCredentials.password</b>}" required="true"/&gt;&lt;br/&gt;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;h:commandButton value="Finish" action="{<b>identity.login</b>}"/&gt;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/h:form&gt;
             &nbsp;&nbsp;&nbsp;&nbsp;&lt;/ui:fragment&gt;
@@ -265,8 +265,8 @@ title: First PicketLink CDI Application
             using the @Inject annotation. In the page above we are referencing the DefaultLoginCredentials bean directly in order to bind both the userId and password values.
           %pre
             .plain
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Username: &lt;h:inputText value="{<b>loginCredentials.userId</b>}"/&gt;&lt;br/&gt;
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password: &lt;h:inputSecret value="{<b>loginCredentials.password</b>}"/&gt;&lt;br/&gt;
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Username: &lt;h:inputText value="{<b>loginCredentials.userId</b>}" required="true"/&gt;&lt;br/&gt;
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password: &lt;h:inputSecret value="{<b>loginCredentials.password</b>}" required="true"/&gt;&lt;br/&gt;
           %p
             PicketLink allows you to use any type of credential you want, including your own custom credential types. The DefaultLoginCredentials is just an out-of-the-box implementation of the <b>Credentials</b> interface that supports a user ID and a credential value.
           %p
