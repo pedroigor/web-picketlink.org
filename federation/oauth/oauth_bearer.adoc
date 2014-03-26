@@ -1,0 +1,30 @@
+= OAuth Bearer Tokens
+:awestruct-layout: project
+:page-interpolate: true
+:showtitle:
+
+IETF OAuth2 Bearer Tokens are described in http://tools.ietf.org/html/rfc6750[RFC 6750].
+
+== What are OAuth Bearer Tokens?
+
+Bearer tokens are tokens that grant access to resources (identified by the tokens) without the need for cryptographic keys(Proof of Possession) of the entity(aka Bearer), in possession of the tokens.
+
+Mandatory requirement is that bearer tokens are protected in storage and transport.
+
+== Mandatory Requirements
+
+. TLS/SSL is mandatory.
+. token_type should be set to "Bearer".
+. SHOULD issue short lived and scoped bearer tokens.
+. SHOULD NOT be passed as query parameters.
+. Resource/Authorization Server MUST use HTTP “WWW-Authenticate” response header field.
+. Clients MUST use HTTP "Authorization" request header field to pass the bearer token to the server.
+
+== Potential Types of OAuth Bearer Tokens
+
+. JSON Web Token (JWT)  (http://www.ietf.org/id/draft-ietf-oauth-json-web-token-19.txt)
+. SAML2 Assertions  (http://www.ietf.org/id/draft-ietf-oauth-saml2-bearer-19.txt)
+
+== Go Back
+Go back to OAuth dashboard
+*link:../oauth/[OAuth Dashboard]*

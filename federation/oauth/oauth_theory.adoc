@@ -1,0 +1,85 @@
+= OAuth Theory
+:awestruct-layout: project
+:page-interpolate: true
+:showtitle:
+
+
+== OAuth Grant Types
+
+OAuth2 supports the following 4 grant types.
+
+. Authorization Code
+
+. Implicit
+
+. Resource Owner Password Credentials
+
+. Client Credentials
+
+=== Authorization Code Grant Type
+
+This grant type is primarily used for confidential clients. This grant type is used to obtain both access tokens and refresh tokens.
+
+The flow is based on redirection. The client must support redirection from the server. So usually the client uses a browser.
+
+==== Steps
+
+. Client uses a browser to access the authorization server and provides at the minimum the Client Identifier and Redirection URL.
+
+. The Authorization Server asks the user (who owns the protected resource) to authenticate and approve the access of the resource.
+
+. Authorization Server provides an authorization code to the client.
+
+. Client now uses the authorization code and a redirection uri to request an access token.
+
+. Authorization Server validates the authorization code and the redirection uri and uses the redirection uri to redirect the client, and provides access token (with optional Refresh Token).
+
+=== Implicit Code Grant Type
+
+This process is used when the application has a fixed redirection URI. The clients are typically browser based Javascript applications.
+
+The flow is based on redirection. The client must support redirection from the server. So usually the client uses a browser.
+
+There is no client authentication and no request for an authorization code.
+
+Also refresh tokens are not provided in this grant.
+
+=== Resource Owner Password Credentials Grant Type
+
+This case is used where the client (such as, New York Times Mobile App) has a trust relationship with a resource owner (such as, Twitter). This grant type should be used only when authorization code grant type or implicit grant types cannot be used.
+
+==== Steps
+
+* Client (such as News Mobile App) obtains the resource owner (such as Twitter User)'s credentials.
+* Client sends username and credentials to authorization Server (such as Twitter).
+* Authorization server validates credential and issues an access token to the client.
+* Client takes the access token and discards the resource owner's credentials. (IMPORTANT)
+* Client can access resource (make posts on twitter, read twitter posts etc) using the access token.
+
+=== Client Credentials Grant Type
+
+This case is when the client uses its credentials with the OAuth Authorization Server to obtain an access token.  This grant type MUST be used with by confidential clients.
+
+== OAuth Message Exchanges
+
+The following changes to what is shown in the diagram may happen in an OAuth exchange:
+
+* The OAuth Application Registration may be performed in an OAuth Provider web application to yield a client id and secret. There is no explicit requirement for OAuth Client to do the registration.
+* The Authorization Server and Token Server can be one. There is no major need to separate them out.
+
+The Exchanges happening between an OAuth Client and Server is represented by the following diagram.
+
+++++
+<img src="https://docs.jboss.org/author/download/attachments/55478804/OAuth.png?version=1&modificationDate=1355339840000" alt="OAuth Exchanges"/>
+++++
+
+== References
+
+* IETF Web Authorization Working Group (http://datatracker.ietf.org/wg/oauth/charter/)
+* IETF OAuth2 (http://datatracker.ietf.org/doc/rfc6749/)
+* Google OAuth Document (https://developers.google.com/accounts/docs/OAuth2)
+* Microsoft Windows Live OAuth2 Document (http://msdn.microsoft.com/en-us/library/live/hh243647.aspx)
+
+== Go Back
+Go back to OAuth dashboard
+*link:../oauth/[OAuth Dashboard]*

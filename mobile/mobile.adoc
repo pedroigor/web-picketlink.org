@@ -1,0 +1,41 @@
+= Mobile Security With PicketLink
+:awestruct-layout: project
+:page-interpolate: true
+:showtitle:
+
+== Why is mobile security important?
+
+With the increasing reliance on mobile devices compared to desktop computers, it has become a critical need to look
+at Mobile Security.
+
+== What are the important challenges with Mobile Security?
+
+The important challenges are:
+
+* Authentication of the user.
+
+* Authentication of the device.
+
+* Device registration.
+
+* Device Loss.
+
+* Data Privacy including confidentiality (Encryption)
+
+== How does PicketLink help in mobile security?
+
+PicketLink enables JavaEE developers to write secure mobile applications. Please take a look at the quickstarts.
+
+Please take a look at REST Security section: http://picketlink.org/appsecurity/rest/
+
+== What about the tokens?
+
+IETF OAuth2 is the preferred standard for tokens in the mobile world.
+
+PicketLink has support for OAuth2.
+
+== References
+
+=== Mobile Cloud Identity Profile v1.0
+
+PicketLink founder, Anil Saldhana has worked with industry experts to create a Mobile Cloud Identity Profile v1.0 document that you will find very useful.  ( http://docs.oasis-open.org/id-cloud/IDCloud-mobile/v1.0/IDCloud-mobile-v1.0.html )
