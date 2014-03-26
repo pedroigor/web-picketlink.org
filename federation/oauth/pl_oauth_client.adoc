@@ -1,0 +1,117 @@
+= PicketLink OAuth Client
+:awestruct-layout: project
+:page-interpolate: true
+:showtitle:
+
+== Create PicketLink OAuth Client
+[source, java, options="nowrap"]
+----
+import org.picketlink.oauth.client.ClientOAuth;
+ 
+ClientOAuth client = new ClientOAuth();
+----
+
+
+== Perform Registration of OAuth Application
+
+If you need to register your OAuth application with the OAuth provider, then you can use:
+
+[source, java, options="nowrap"]
+----
+import org.picketlink.oauth.client.ClientOAuth.RegistrationClient;
+import org.picketlink.oauth.client.ClientOAuth.RegistrationResponse;
+ 
+private String registrationEndpoint = "http://localhost:11080/oauth/register";
+RegistrationClient registration = client.registrationClient();
+ 
+RegistrationResponse registrationResponse = registration.setLocation(registrationEndpoint).setAppName(appName).setAppURL(appURL).setAppDescription(appDescription)
+.setAppIcon(appIcon).setAppRedirectURL(appRedirectURL).build().execute();
+ 
+String clientID = registrationResponse.getClientId();
+ 
+assertNotNull(clientID);
+String clientSecret = registrationResponse.getClientSecret();
+ 
+assertNotNull(clientSecret);
+ 
+if (registrationResponse.getExpiresIn() != 3600L) {
+   fail("expires");
+}
+ 
+long parsedIssuedAt = Long.parseLong(registrationResponse.getIssuedAt());
+ 
+assertTrue(parsedIssuedAt - (new Date()).getTime() < 50L);
+----
+
+In line 4, we initialize the end point url of the registration service. Line 5, we instantiate the RegistrationClient.  In line 7, we build the Registration and execute it.  We obtain a RegistrationResponse.
+
+From the RegistrationResponse, we obtain the clientId, clientsecret and also if desired, we can get the issuer details.
+
+
+
+== Obtain an AuthorizationCode
+
+Assuming that the OAuth2 Application is registered at the OAuth2 Provider, we can obtain an authorization code before requesting access tokens for users.
+
+[source, java, options="nowrap"]
+----
+String authorizationEndpoint = "http://localhost:11080/oauth/authz";
+String authzRedirectURL = "http://localhost:11080/oauth/redirect";
+ 
+AuthorizationClient authorization = client.authorizationClient();
+AuthorizationResponse authorizationResponse = authorization.setAuthorizationEndpoint(authorizationEndpoint)
+                .setClientID(clientID).setAuthCodeRedirectURL(authzRedirectURL).build().execute();
+ 
+String msg = authorizationResponse.getResponseMessage();
+// Msg will contain something like http://localhost:11080/oauth/redirect?code=3c80bf2325fc6e9ef5b84ea4edc6a2ac
+int index = msg.indexOf("http");
+String subString = msg.substring(index + authzRedirectURL.length() + 1);
+Map<String, Object> map = OAuthUtils.decodeForm(subString);
+ 
+String authorizationCode = (String) map.get(OAuth.OAUTH_CODE);
+assertNotNull(authorizationCode);
+----
+
+== Obtain an Access Token
+
+If your OAuth application is registered with the OAuth provider and your client application has an authorization code, you can now request access tokens.
+
+
+[source, java, options="nowrap"]
+----
+// Step 3: Get Access Token on behalf of an User.
+AccessTokenClient tokenClient = client.tokenClient();
+AccessTokenResponse tokenResponse = tokenClient.setTokenEndpoint(tokenEndpoint).setAuthorizationCode(authorizationCode)
+.setAuthCodeRedirectURL(authCodeRedirectURL).setClientID(clientID).setClientSecret(clientSecret).build()
+.execute();
+ 
+String accessToken = tokenResponse.getAccessToken();
+long expiresIn = tokenResponse.getExpiresIn();
+ 
+assertNotNull("Validate access token is null?", accessToken);
+assertNotNull("Validate expires is null?", expiresIn);
+----
+
+== With Access Token, Invoke protected resource
+
+You will get back an InputStream (that represents the resource contents or can be contents of an error page)
+
+
+[source, java, options="nowrap"]
+----
+import org.picketlink.oauth.amber.oauth2.common.utils.OAuthUtils;
+ 
+String resourceURL = "http://localhost:11080/oauth/resource";
+ 
+ResourceClient resourceClient = client.resourceClient(accessToken);
+ 
+InputStream inputStream = resourceClient.execute(resourceURL);
+String responseBody = OAuthUtils.saveStreamAsString(inputStream);
+ 
+assertEquals("I am a Resource", responseBody);
+----
+
+== Go Back
+Go back to OAuth dashboard
+*link:../oauth/[OAuth Dashboard]*
+

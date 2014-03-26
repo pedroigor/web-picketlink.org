@@ -1,0 +1,17 @@
+= OAuth Dashboard
+:awestruct-layout: project
+:page-interpolate: true
+:showtitle:
+
+== What is OAuth?
+
+OAuth v2.0 is an IETF standard for delegated authorization on the internet.
+
+== OAuth Theory
+*link:../oauth_theory/[OAuth Theory]*
+
+== OAuth Bearer Tokens
+*link:../oauth_bearer/[OAuth Bearer]*
+
+== PicketLink OAuth Client
+*link:../pl_oauth_client/[PicketLink OAuth Client]*
