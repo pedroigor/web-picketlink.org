@@ -12,7 +12,7 @@ The PicketLink team is pleased to announce the release of v2.6.0.CR1.  This rele
 === Notable Changes
 * PicketLink SAML SSO For WildFly8
 ** WildFly Bindings for Federation
-* Improved Documentation
+* Improved Documentation (We still need to do a better job at documentation. :-) )
 * Additional PicketLink Quickstarts
 * PicketLink Permission API
 * PicketLink Subsystem for WildFly
