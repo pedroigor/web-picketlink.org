@@ -27,6 +27,7 @@ layout: project
         %a.carousel-control.left{"data-slide" => "prev", :href => "#myCarousel"} ‹
         %a.carousel-control.right{"data-slide" => "next", :href => "#myCarousel"} ›
 
+
 -# Attention row of projects
 #equalHeightsB.row-fluid.equalHero
   .span4.well.offset4
@@ -182,3 +183,8 @@ layout: project
       %a.btn.btn-primary{:href => "#{site.base_url}/testimonials/testimonial/"}
         Testimonials
         %i.icon-circle-arrow-right
+
+
+/ section containing Tweets
+.row-fluid
+  = partial( 'tweets.html.haml' )

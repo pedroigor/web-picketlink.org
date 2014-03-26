@@ -33,6 +33,7 @@ Please take a look at REST Security section: http://picketlink.org/appsecurity/r
 IETF OAuth2 is the preferred standard for tokens in the mobile world.
 
 PicketLink has support for OAuth2.
+http://picketlink.org/federation/oauth/oauth/
 
 == References
 
