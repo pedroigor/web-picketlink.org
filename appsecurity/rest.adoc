@@ -7,3 +7,4 @@
 
 * https://github.com/jboss-developer/jboss-picketlink-quickstarts/tree/master/picketlink-authentication-rs-endpoint [Authentication using REST endpoints]
 
+* https://github.com/jboss-developer/jboss-picketlink-quickstarts/tree/master/picketlink-authorization-rs-rbac [Quickstart that demonstrates how to use RBAC to your JAX-RS Endpoints]
