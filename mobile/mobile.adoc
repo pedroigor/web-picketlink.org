@@ -22,11 +22,27 @@ The important challenges are:
 
 * Data Privacy including confidentiality (Encryption)
 
+According to OWASP, the top 10 mobile security controls are listed in the following diagram:
+++++
+<img src="https://www.owasp.org/images/8/85/OWASP_Mobile_Top_10_Controls.jpg"/>
+++++
+Courtesy: OWASP Mobile Security Project: https://www.owasp.org/index.php/OWASP_Mobile_Security_Project
+
 == How does PicketLink help in mobile security?
 
 PicketLink enables JavaEE developers to write secure mobile applications. Please take a look at the quickstarts.
 
-Please take a look at REST Security section: http://picketlink.org/appsecurity/rest/
+Please take a look at the following page on Mobile Contacts Application secured with PicketLink
+*link:../mobile_contacts/[Mobile Contacts App With PicketLink]*
+
+In addition, please have a look at 
+
+* PicketLink Quickstarts. : https://github.com/jboss-developer/jboss-picketlink-quickstarts
+
+* REST Security section: http://picketlink.org/appsecurity/rest/
+
+as different aspects of an application will become evident.
+
 
 == What about the tokens?
 

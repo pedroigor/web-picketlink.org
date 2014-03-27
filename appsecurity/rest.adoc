@@ -3,8 +3,23 @@
 :page-interpolate: true
 :showtitle:
 
+== What is REST?
+REST is an architectural style for lightweight applications. Please read http://en.wikipedia.org/wiki/Representational_state_transfer for more details.
+
+== What support exists for REST application development in the JavaEE world?
+REST applications can be developed using JAX-RS.
+
+== How do I secure REST applications?
+PicketLink can be used to secure JAX-RS applications.
+
+Please take a look at the quickstarts below.
+
 == Quickstarts for REST Security
 
 * https://github.com/jboss-developer/jboss-picketlink-quickstarts/tree/master/picketlink-authentication-rs-endpoint [Authentication using REST endpoints]
 
 * https://github.com/jboss-developer/jboss-picketlink-quickstarts/tree/master/picketlink-authorization-rs-rbac [Quickstart that demonstrates how to use RBAC to your JAX-RS Endpoints]
+
+== How does REST security related to Mobile security?
+Majority of the Mobile HTML5 applications are REST applications. So they are closely related.
+*link:../../mobile/mobile/[Mobile Application Security With PicketLink]*
