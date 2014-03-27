@@ -1,0 +1,31 @@
+= Mobile Contacts Application secured by PicketLink
+:awestruct-layout: project
+:page-interpolate: true
+:showtitle:
+
+== What is the Mobile Contacts Application?
+
+The Mobile Contacts Application is a mobile application developed as part of the JBoss Developer program to demonstrate the use of Java, REST and HTML5 technologies.
+
+== PicketLink Security for the Mobile Contacts Application
+
+ INFO: The Mobile Contacts Application is always evolving. So keep it as a moving target that gets enhancements frequently.
+
+
+The workspace where the Mobile Contacts Application has been secured with PicketLink is at:
+https://github.com/pedroigor/jboss-wfk-quickstarts/tree/PLINK-392/contacts-mobile-basic
+
+== Demonstration on OpenShift   (Mobile Application hosted in the Cloud)
+
+The demo is available at: http://picketlinkcontacts-pedroigor.rhcloud.com/
+
+=== Sign In With The Following User/Password Combination
+
+       john/john - GET only
+       duke/duke - GET, PUT and POST only
+       admin/admin - GET, PUT, POST and DELETE
+
+
+== Go Back
+Go back to Mobile dashboard
+*link:../mobile/[Mobile Dashboard]*
