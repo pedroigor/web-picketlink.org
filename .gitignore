@@ -7,3 +7,4 @@
 _partials/head.html.html
 _site/
 index.html.html
+*.iml
