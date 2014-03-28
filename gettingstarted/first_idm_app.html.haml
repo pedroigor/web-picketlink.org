@@ -1,0 +1,528 @@
+---
+layout: project
+title: First PicketLink Identity Management Application
+---
+
+.row-fluid
+  .row-fluid
+    .span12.well.post-bg
+      .row-fluid
+        .span12
+          %h2 Identity Management Overview
+          %p
+            This guide will show you how to use the PicketLink Identity Management API to manage identity data such as partitions, users, roles, groups, credentials, attributes and so forth.
+            It will cover some core concepts and make it easier for you to understand how those concepts are applied in a project.
+          %p
+            The first thing you should know about PicketLink IDM is that you can use it in Java SE the same way you use it in Java JEE. The main difference between those platforms is
+            how components are exposed to your application and the built-in capabilities provided by one over another.
+          %p
+            In Java JEE, PicketLink provides a rich and flexible CDI Extension, making a lot easier how you use the IDM API. Main components such as <b>PartitionManager</b> and <b>IdentityManager</b> are
+            available for injection with a default configuration so you can start using them very quickly to manage your identity data. But in essence the IDM API is based on Java SE, what means you can use it in any Java-based project.
+          %p
+            This guide will show you how to add the following capabilities to your application:
+            %ul
+              %li Partition Management
+              %li IdentityType Management
+              %li Relationship Management
+              %li Credential Management
+              %li Attribute Management
+              %li Configuration Overview
+          %p
+            We strongly recommend you to take a look at the
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e340") Identity Management Overview
+            section of the documentation.
+          %p
+            This guide is based on some example applications provided by our
+            %a(href="https://github.com/jboss-developer/jboss-picketlink-quickstarts")quickstarts.
+            Check the README.md file for each quickstart for more details about how to use them.
+          %p
+            You can also check the
+            %a(href="../first_cdi_app") First PicketLink CDI Application Guide
+            for more information about how to create a simple application.
+      .row-fluid
+        .span12
+          %h3 Identity Model
+          %p
+            The
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e446")Identity Model
+            is a set of classes that define the security structure of an application. In a nutshell, those classes will be used to represent your identity data and store it using the PicketLink IDM API. Most applications have their own
+            set of classes and interfaces to represent users, roles, groups, permissions and so on. That is what the Identity Model is all about where PicketLink provides an abstract and flexible model from which you can create your own representations.
+          %p
+          %img(src="http://docs.jboss.org/picketlink/2/latest/reference/html_single/diagrams/identitymodel.png" width="600px")
+          %p
+            In order to help users to start using PicketLink with the minimal effort, PicketLink provides a
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html_single/#picketlink-idm-basicmodel") Basic Model
+            based on some very common use cases. This model provides a specific representation for users, groups, roles, partitions, permissions and relationships like grants and group memberships. You can use it directly in your project or even use it
+            as a template for your own model. That said, you're not forced to use the Basic Model in order to use PicketLink IDM. For more details about how to provide your own model, check our
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e498")documentation.
+          %img(src="http://docs.jboss.org/picketlink/2/latest/reference/html_single/diagrams/basicidentitymodel.png" width="600px")
+          %p
+            Understand the PicketLink Identity Model is crucial to use all that PicketLink IDM has to offer. Try to spend some time looking how the Basic Model was built to understand more how you can extend PickeLink IDM to better fit your requirements.
+      .row-fluid
+        .span12
+          %h3 Managing Partitions
+          %p
+            PicketLink has been designed from the ground up to support a system of partitioning, allowing the identity objects it manages to be separated into logical groupings.
+            Partitions may be used to split identities into separate realms, allowing an application to serve multiple organisations (for example in a SaaS architecture) or to support a multi-tier application allowing each tier to define its own set of identity objects (such as groups or roles).
+            PicketLink's architecture also allows you to define your own custom partition types, allowing more complex use cases to be supported.
+          %p
+            When managing identity data, every single operation is executed in the scope of a partition. By default, PicketLink creates a <b>default</b> partition for your application during startup, so you can start managing
+            your data using a single partition. If you're using the Basic Model (as discussed previously), partitions are repesented by the <b>Realm</b> type.
+          %p
+            Partitions are managed by the <b>PartitionManager</b> interface. You can inject an instance into your beans as follows:
+          .well
+            @Inject<br/>
+            private PartitionManager partitionManager;
+          %p
+            You can also observe the <b>PartitionManagerCreateEvent</b> to initialize your partitions during application startup. As mentioned before, by default PicketLink will create a default partition if none is provided,
+            but sometimes you may want to initialize your own partitions and don't create a default one:
+          .well
+            @Stateless<br/>
+            public class IDMInitializer {<br/><br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;public void createDefaultUsers(<b>@Observes PartitionManagerCreateEvent event</b>) {<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PartitionManager partitionManager = event.getPartitionManager();<br/><br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;createUserForRealm(partitionManager, Resources.REALM.acme.name(), "bugs");<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;createUserForRealm(partitionManager, Resources.REALM.umbrella.name(), "jill");<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;createUserForRealm(partitionManager, Resources.REALM.wayne.name(), "bruce");<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;}<br/><br/>
+
+            &nbsp;&nbsp;&nbsp;&nbsp;private void createUserForRealm(PartitionManager partitionManager, String realmName, String loginName) {<br/>
+            <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Realm partition = partitionManager.getPartition(Realm.class, realmName);<br/><br/></b>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (partition == null) {<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;partition = new Realm(realmName);<br/>
+            <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;partitionManager.add(partition);<br/></b>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/><br/>
+            <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IdentityManager identityManager = partitionManager.createIdentityManager(partition);<br/></b>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User user = new User(loginName);<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password password = new Password(user.getLoginName() + "123");<br/><br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;identityManager.add(user);<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;identityManager.updateCredential(user, password);<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+            }
+          %p
+            This is a good example about how to use the PartitionManager bean to create different partitions and store different users for each one.
+          %p
+            The PartitionManager interface provides some key services to manage partitions as well create other key IDM components. In the example above it is being used to look for a <b>Realm</b> partition using a name:
+          .well
+            Realm partition = this.partitionManager.getPartition(Realm.class, realmName);
+          %p
+            It is being used to create a new partition:
+          .well
+            this.partitionManager.add(partition);
+          %p
+            And for last, we're also using it to create a <b>IdentityManager</b> instance for a specific partition so we can manage identity data such as users, credentials, roles and groups:
+          .well
+            IdentityManager identityManager = this.partitionManager.createIdentityManager(partition);
+          %p
+            Another important aspect of Partition Management is that you can have different identity stores(eg.: LDAP and JPA) each one storing data for a specific partition. Take a look the this
+            %a(href="https://docs.jboss.org/picketlink/2/latest/reference/html_single/#providing_multiple_configurations") documentation
+            for more information about how to store data using different partitions and identity stores.
+          %p
+            For more information about the the PartitionManager interface take a look at this
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e558")documentation.
+          %p
+            You can also check the
+            %a(href="https://github.com/pedroigor/picketlink-quickstarts/tree/master/picketlink-authentication-idm-multi-tenancy")PicketLink Multi-Tenancy Example
+            quickstart for more examples about how to use partitions.
+      .row-fluid
+        .span12
+          %h3 Managing Identity Types (Eg.: User, Roles and Groups)
+          %p
+            If you look again at the Identity Model diagram, you'll notice that there is a <b>IdentityType</b> interface. This is the base interface for Identity objects.
+            It declares properties that indicate whether the identity object is enabled or not, optional created and expiry dates, plus methods to read and set the owning Partition.
+            Every single IdentityType is directly related with a specific partition. You should keep that in mind when storing them.
+          %p
+            Usually, the representation of users, roles and groups will always be based on the IdentityType interface. But you're not tied to represent only these, if you're working with a mobile application you
+            may want to have a representation for user's devices (eg.: cell phones, tablets, etc) and create your own implementation of the IdentityType interface.
+          %p
+            The main component used to manage identity types is the <b>IdentityManager</b>. It is basically an interface with a lot of useful methods to give you complete control over your types such as:
+            %ul
+              %li CRUD operations
+              %li Query
+              %li Credential Management
+          %p
+            The IdentityManager can always be injected into any bean as follows:
+          .well
+            @Inject<br/>
+            private IdentityManager identityManager;
+          .well
+            INFO: The IdentityManager bean is a request-scoped bean, it is not thread safe. Keep that in mind when injecting it into your beans.
+          %p
+            As mentioned before, the IdentityManager is directly related with a partition. Usually, when you inject this bean you're working in the scope of the default partition. But you may want
+            to inject an instance using a different partition, specially if you're working in a multi-tenancy architecture. This can be easily done by just providing a producer method that
+            returns the partition you want to use.
+          .well
+            @SessionScoped<br/>
+            @Named<br/>
+            public class RealmSelector implements Serializable {<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;@Inject<br/>
+            <b>&nbsp;&nbsp;&nbsp;&nbsp;private PartitionManager partitionManager;</b><br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;private Realm realm;<br/><br/>
+            <b>&nbsp;&nbsp;&nbsp;&nbsp;@Produces</b><br/>
+            <b>&nbsp;&nbsp;&nbsp;&nbsp;@PicketLink</b><br/>
+            <b>&nbsp;&nbsp;&nbsp;&nbsp;public Realm select() {</b><br/>
+            <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return this.realm;</b><br/>
+            <b>&nbsp;&nbsp;&nbsp;&nbsp;}</b><br/><br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;public Resources.REALM getRealm() {<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (this.realm == null) {<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return null;<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return Resources.REALM.valueOf(this.realm.getName());<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;}<br/><br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;public void setRealm(Resources.REALM realm) {<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>this.realm = this.partitionManager.getPartition(Realm.class, realm.name());</b><br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+            }
+          %p
+            The code above is a good example about how you can set the current partition for a given user session. The following method
+          .well
+            &nbsp;&nbsp;&nbsp;&nbsp;public void setRealm(Resources.REALM realm) {<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>this.realm = this.partitionManager.getPartition(Realm.class, realm.name());</b><br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;}
+          %p
+            is receiving a Enum value which maps to a specific partition supported by the application. Inside this method the PartitionManager interface is used to obtain the corresponding partition
+            from the Identity Store and store it internally. Now, every time you inject a <b>IdentityManager</b> PicketLink will create one based on this partition. Look at this producer method:
+          .well
+            &nbsp;&nbsp;&nbsp;&nbsp;@Produces<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;@PicketLink<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;public Realm select() {<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return this.realm;<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;}
+          %p
+            Here the <b>@PicketLink</b> qualifier annotation is used to indicate that PicketLink should use the returned partition for every single IDM operation.
+          %p
+            So far we have seem what is the IdentityManager, how it is related with your partitions and how to get an instance to start managing your identity types. However, we didn't talk about how to use it to
+            store your identity types. The IdentityManager interface provides methods to CRUD your identity types and this is the easiest part.
+          .well
+            User user = new User("jdoe");<br/><br/>
+            user.setFirstName("Jane");<br/>
+            user.setLastName("Doe");<br/><br/>
+            identityManager.add(user); // let's store user 'jdoe'<br/><br/>
+            Group group = new Group("employees");<br/><br/>
+            identityManager.add(group); // let's store group 'employees'<br/><br/>
+            Role admin = new Role("admin");<br/><br/>
+            identityManager.add(admin); // let's store role 'admin'
+          %p
+            Simple isn't ? Is just a matter of instantiating your type, populate it with some data and use the IdentityManager to store it. The same applies when you're updating:
+          .well
+            User user = BasicModel.getUser(identityManager, "jdoe");<br/><br/>
+            user.setEmail("jdoe@jboss.org");<br/><br/>
+            identityManager.update(user); // let's update user's email
+          %p
+            or removing:
+          .well
+            User user = BasicModel.getUser(identityManager, "jdoe");<br/><br/>
+            identityManager.remove(user); // let's remove user 'jdoe'
+          %p
+            You may notice that in all examples above the <b>
+            %a(href="https://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e1076")BasicModel</b>
+            class is being used. As discussed in the <b>Identity Model</b> section, PicketLink provides a default identity model implementation, which we call Basic Model.
+            The BasicModel class is basically a utility class with a lot of useful methods to easily manage all types provided by the Basic Model. As you can see in the examples, we're using the <b>BasicModel.getUser</b> to retrieve an User instance
+            from the identity store. If you're using the Basic Model in your application, you'll find this class very helpful.
+      .row-fluid
+        .span12
+          %h3 Managing Relationships (Eg.: Granting Roles, Group Membership, etc)
+          %p
+            When designing your identity model, define only your identity types isn't enough. You also need to define how they relate with each other in a manner that you create some meaninful relationships between them.
+          %p
+            A good example of a relationship is when you need to grant a role to an user or add an user to a group, or even tell that an user plays a specific role in a group. This is what relationships is all about.
+          %p
+            The same way the Basic Model provides some built-in identity types ready for use, it also provides some common relationships types. Are they:
+            %ul
+              %li <b>Grant</b>           - used to grant a Role to an User or Group.
+              %li <b>GroupMembership</b> - used to add an user as a member of a group.
+              %li <b>GroupRole</b>       - used to tell that an user plays a specific role in a group
+          %p
+            These are very common cases of relationships from a security perspective. You usually need to define roles for users and groups, make an user member of a group or define a role for him inside a group.
+          %p
+            But again, you're not tied to use only those relationship types. The beauty of PicketLink is that you can even create your own relationships according with your requirements !
+          %p
+            For more information about relationship types and how to create your own types, plese check our
+            %a(href="https://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e542")documentation.
+          %p
+            The same way identity types are managed by the IdentityManager interface, relationships are managed by a specific interface called <b>RelationshipManager</b>. But differently than identity types, relationships
+            don't belong to a specific partition. This is an important thing to keep in mind, actually they help to reference different identity types from different partitions. For example, you can store an user in Partition A and also
+            have a Role in Partition B. It is possible to create a Grant relationship using both User and Role, even if they belong to different partitions !
+          %p
+            That said, the <b>RelationshipManager</b> can also be inject into any of your beans as follows:
+          .well
+            @Inject<br/>
+            private RelationshipManager relationshipManager;
+          %p
+            Or you can create it manually from a PartitionManager instance as follows:
+          .well
+            RelationshipManager relationshipManager = this.partitionManager.createRelationshipManager();
+          %p
+            Manage relationships using this interface is pretty simple, here are some examples:
+          .well
+            User bob = BasicModel.getUser(identityManager, "bob"); // let's retrieve user 'bob'<br/>
+            Role superuser = BasicModel.getRole(identityManager, "superuser"); // let's retrieve role 'superuser'<br/><br/>
+            BasicModel.grantRole(relationshipManager, bob, superuser); // now grant role 'superuser' to 'bob'
+          %p
+            You may notice that we're also using the BasicModel class to help us to create the relationship. But the above is equivalent to the following:
+          .well
+            User bob = BasicModel.getUser(identityManager, "bob");<br/>
+            Role superuser = BasicModel.getRole(identityManager, "superuser");<br/><br/>
+            Grant grant = new Grant(bob, superuser);<br/><br/>
+            identityManager.add(grant);
+          %p
+            For more information about how to manage relationships, please look at the
+            %a(href="https://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e1148")documentation.
+          %p
+            If we want to check if a role was granted to an user we can just use:
+          .well
+            User bob = BasicModel.getUser(identityManager, "bob");<br/>
+            Role superuser = BasicModel.getRole(identityManager, "superuser");<br/><br/>
+            BasicModel.hasRole(relationshipManager, bob, superuser);
+          %p
+            Or we can use the Relationship Query API as follows:
+          .well
+            RelationshipQuery<Grant> query = relationshipManager.createRelationshipQuery(Grant.class);<br/><br/>
+            query.setParameter(Grant.ASSIGNEE, bob);<br/>
+            query.setParameter(GroupRole.ROLE, superuser);<br/><br/>
+            List&lt;Grant&gt; result = query.getResultList();<br/><br/>
+            if (!result.isEmpty()) {<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp; // we found a Grant for usser 'bob' and role 'superuser'<br/>
+            }
+          %p
+            You can even get all roles granted for an user:
+          .well
+            RelationshipQuery<Grant> query = relationshipManager.createRelationshipQuery(Grant.class);<br/><br/>
+            query.setParameter(Grant.ASSIGNEE, bob);<br/><br/>
+            List&lt;Grant&gt; result = query.getResultList();<br/><br/>
+            for (Grant grant : result) {<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp; // iterating over the user roles<br/>
+            }
+          %p
+            For some very useful and working examples about how to use the Query API, take at look at those
+            %a(href="https://github.com/picketlink/picketlink/tree/master/modules/idm/tests/src/test/java/org/picketlink/test/idm/query")classes.
+      .row-fluid
+        .span12
+          %h3 Managing Credentials and Authentication
+          %p
+            PicketLink IDM provides a easy and flexible API that allows you to manage credentials and perform authentication. The Credential API
+            is based on two main concepts:
+            %ul
+              %li Only <b>Account</b> types are passive of authentication.
+              %li You can use any type of credential you want. However, PicketLink provides some built-in credential types for Username/Password, Time-based One Time Password (TOTP), DIGEST and X509 certificates.
+          %p
+            If you look the Identity Model, you'll notice that there is a special interface called <b>Account</b>. It is the base interface for identities that are capable of authenticating.
+            Since the authentication process may not depend on one particular type of attribute (not all authentication is performed with a username and password) there are no hard-coded property accessors defined by this interface.
+            It is up to each application to define the Account implementations required according to the application's requirements.
+          %p
+            An example of Account type is the User type provided by the Basic Model. For the sake of this guide, we'll use the User type to demonstrate how to update and validate credentials.
+          %p
+            Credentials are also managed by the <b>IdentityManager</b> interface. The example below shows how you can use it to update the credentials for an user.
+          .well
+            User user = BasicModel.getUser(identityManager, "jsmith");<br/>
+            Password password = new Password("abcd1234")<br/><br/>
+            identityManager.updateCredential(user, password); // let's update user's credential
+          %p
+            Once the user has a credential, you can validate it and authenticate the user as follows:
+          .well
+            User user = BasicModel.getUser(identityManager, "jsmith");<br/>
+            UsernamePasswordCredentials credential = new UsernamePasswordCredentials();<br/>
+            Password password = new Password("abcd1234");<br/><br/>
+            credential.setUsername(user.getLoginName());<br/>
+            credential.setPassword(password);<br/><br/>
+            identityManager.validateCredentials(credential);<br/><br/>
+            if (Status.VALID.equals(credential.getStatus()) {<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;// successful validation<br/>
+            } else {<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;// invalid credentials<br/>
+            }
+          %p
+            Please check the
+            %a(href="https://docs.jboss.org/picketlink/2/latest/reference/html_single/#picketlink-idm-credentials") documentation
+            for more information about the built-in credential types and more details about the Credential API. There you will also find how to extend PicketLink and provide your own credential types.
+          %p
+            PicketLink also provides some useful quickstarts in this area:
+            %ul
+              %li
+                %a(href="https://github.com/jboss-developer/jboss-picketlink-quickstarts/tree/master/picketlink-authentication-two-factor")Time-based One Time Password Authentication
+      .row-fluid
+        .span12
+          %h3 Managing Attributes
+          %p
+            PicketLink provides a nice way to manage attributes for identity model types. In another words, you can manage attributes for most of the supported types like partitions, identity types and relatinship types.
+          %p
+            Attributes are supported in two flavors:
+            %ul
+              %li Formal attributes - Strong-typed and directly defined in your types as properties. Eg.: User.loginName, User.firstName, etc.
+              %li Ad-hoc attributes - Weak-typed and stored as key/value pairs.
+          %p
+            When creating your own identity model types, you'll usually prefer formal attributes to store the state. In this case you just need to define a property in your type mapped with the <b>@AttributeProperty</b> annotation.
+          %p
+            But sometimes, you may need some flexibility on how attributes are created/updated/removed. So you don't need to change your types to support new attributes. Here is an example about how to set ad-hoc attributes to a type.
+          .well
+            User user = BasicModel.getUser(identityManager, "jsmith");<br/><br/>
+            user.setAttribute(new Attribute<Integer>("QuestionTotal", 2);<br/>
+            user.setAttribute(new Attribute<String>("Question1", "What is favorite toy?"));<br/>
+            user.setAttribute(new Attribute<String>("Question1Answer", "Gum"));<br/>
+            user.setAttribute(new Attribute<String>("Question2", "What is favorite word?"));<br/>
+            user.setAttribute(new Attribute<String>("Question2Answer", "Hi"));<br/><br/>
+            identityManager.update(user);
+          %p
+            However, you should use ad-hoc attributes very wisely as they're not type-safe.
+          %p
+            PicketLink also supports queries based on attributes. What mean you can find a specific type by providing the attribute name and value you want to match.
+          %p
+            For more information about Attribute Management, check our
+            %a(href="https://docs.jboss.org/picketlink/2/latest/reference/html_single/#picketlink-idm-attributes")documentation.
+      .row-fluid
+        .span12
+          %h3 Configuration Overview
+          %p
+            When using Java JEE you need a minimal configuration to start using PicketLink IDM in your application. PicketLink provides some defaults if you want to use a File-based or JPA-based configuration.
+            In both cases, PicketLink will always use the Basic Model as the default identity model.
+          %h4 File-based Default Configuration
+          %p
+            A File-based configuration is very handy for demos, development and testing purposes, it allows you to start using PicketLink very quickly. This configuration is enabled when your application
+            does not provide a IDM configuration and when no JPA Entity classes are found in your application's classpath mapped with the PicketLink JPA Annotations.
+          %p
+            This
+            %a(href="https://github.com/jboss-developer/jboss-picketlink-quickstarts/tree/master/picketlink-authentication-idm-jsf")quickstart
+            is a good example about how an application looks like when using the File-based default configuration.
+          %h4 JPA-based Default Configuration
+          %p
+            The JPA-based configuration is enabled when JPA Entity classes are found in your application's classpath mapped with the PicketLink JPA Annotations.
+            The good news is that PicketLink provides a set of JPA entities which can be used with the Basic Model. Those entities provide all the necessary mapping to store the Basic Model types.
+          %p
+            To get those entities in your project you just need to add the following dependency to your pom.xml:
+          %pre
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;dependency&gt;
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;org.picketlink&lt;/groupId&gt;
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;picketlink-idm-simple-schema&lt;/artifactId&gt;
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;scope&gt;runtime&lt;/scope&gt;
+            &lt;/dependency&gt;
+          %p
+            You should also provide a producer method to produce the <b>EntityManager</b> you want to use.
+          .well
+            @PersistenceContext(unitName = "my-app-pu")<br/>
+            private EntityManager myApplicationEntityManager;<br/><br/>
+            @PersistenceContext(unitName = "picketlink-pu")<br/>
+            private EntityManager picketlinkEntityManager;<br/><br/>
+            @Produces<br/>
+            @PicketLink<br/>
+            public EntityManager getPicketLinkEntityManager() throws Exception {<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;return this.picketlinkEntityManager;<br/>
+            }<br/>
+          %p
+            It is important to highlight that the JPA entity classes provided by <b>picketlink-idm-simple-schema</b> are just a default mapping for the Basic Model. You're not forced to use it, the same way you're not forced to use the Basic Model.
+            Actually, we strongly recommend users to design their own identity model (probably using the Basic Model as an example) and also use the picketlink-idm-simple-schema as an example about how to map your identity model types using JPA.
+          %p
+            Take a look at the
+            %a(href="https://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e1528")JPA Identity Store
+            documentation for more details.
+          %h4 Providing Your Own Configuration
+          %p
+            All configuration is done during your application startup, where PicketLink provides some hooks that can be used to provide your own IDM configuration.
+            Configure IDM is pretty simple, you'll usually use a fluent Configuration API from where you can provide your own configuration.
+          %p
+            One of this hooks is provided by the <b>IdentityConfigurationEvent</b>. This event is fired during your application startup and allows you to get a reference to the <b>IdentityConfigurationBuilder</b> from where you
+            can provide your configuration.
+          .well
+            public static class IDMConfiguration {<br/><br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;@Inject<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;private EEJPAContextInitializer contextInitializer;<br/><br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;public void observeIdentityConfigurationEvent(<b>@Observes IdentityConfigurationEvent event</b>) throws Exception {<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IdentityConfigurationBuilder builder = event.getConfig();<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;builder<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.named("custom-config")<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.stores()<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.jpa()<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.mappedEntity(<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AccountTypeEntity.class,<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RoleTypeEntity.class,<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GroupTypeEntity.class,<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IdentityTypeEntity.class,<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RelationshipTypeEntity.class,<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RelationshipIdentityTypeEntity.class,<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PartitionTypeEntity.class,<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PasswordCredentialTypeEntity.class,<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DigestCredentialTypeEntity.class,<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X509CredentialTypeEntity.class,<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTPCredentialTypeEntity.class,<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AttributeTypeEntity.class<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.addContextInitializer(this.contextInitializer)<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.supportAllFeatures();<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;}
+          %p
+            In the example above we're configuring IDM to use a JPA-based identity store, so you can store your identity data using a database.
+          %p
+            You can also provide your IDM configuration by producing one or more <b>IdentityConfiguration</b> instances:
+          .well
+            @Produces<br/>
+            public IdentityConfiguration produceFileConfiguration() {<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;IdentityConfigurationBuilder builder = new IdentityConfigurationBuilder();<br/><br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;builder<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.named("file-based.config")<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.stores()<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.file()<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.supportAllFeatures();<br/><br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;return builder.build();<br/>
+            }
+          %p
+            Or you can even produce your own <b>PartitionManager</b> instance.
+          .well
+            @PicketLink<br/>
+            @Produces<br/>
+            public PartitionManager producePartitionManager() {<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;IdentityConfigurationBuilder builder = new IdentityConfigurationBuilder();<br/><br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;builder<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.named("ldap.config")<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.stores()<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.ldap()<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.baseDN("dc=jboss,dc=org")<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.bindDN("uid=admin,ou=system")<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.bindCredential("passwd")<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.url("ldap://localhost:389")<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.mapping(Agent.class)<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.baseDN("ou=Agent,dc=jboss,dc=org")<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.objectClasses("account")<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.attribute("loginName", "uid", true)<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.readOnlyAttribute("createdDate", "createTimeStamp")<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.mapping(User.class)<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.baseDN("ou=User,dc=jboss,dc=org")<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.objectClasses("inetOrgPerson", "organizationalPerson")<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.attribute("loginName", "uid", true)<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.attribute("firstName", "cn")<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.attribute("lastName", "sn")<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.attribute("email", EMAIL)<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.readOnlyAttribute("createdDate", "createTimeStamp")<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.mapping(Role.class)<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.baseDN("ou=Roles,dc=jboss,dc=org")<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.objectClasses("role")<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.attribute("name", "cn", true)<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.readOnlyAttribute("createdDate", "createTimeStamp")<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.mapping(Group.class)<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.hierarchySearchDepth(4)<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.objectClasses("group")<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.attribute("name", "cn", true)<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.readOnlyAttribute("createdDate", "createTimeStamp")<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.parentMembershipAttributeName("member")<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.mapping(Grant.class)<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.forMapping(Role.class)<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.attribute("assignee", "member")<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.mapping(GroupMembership.class)<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.forMapping(Group.class)<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.attribute("member", "member");<br/><br/>
+
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return new DefaultPartitionManager(builder.buildAll());<br/>
+            }
+          %p
+            Please take a look at the
+            %a(href="https://docs.jboss.org/picketlink/2/latest/reference/html_single/#picketlink-idm-configuration")Identity Configuration
+            section for more details about the Configuration API and the IDM configuration.
+      .row-fluid
+        .span12
+          %h3 Summary
+          %p
+            Hopefully this guide helped you to understand some core concepts of PicketLink IDM like the <b>Identity Model</b>, <b>PartitionManager</b> and <b>IdentityManager</b> beans, what are the key features and references about how to extend PicketLink to fit your needs.
+          %p
+            We covered some important and basic concepts that will help you to deep dive into some more advanced concepts of PicketLink and create more advanced and complex usecases.
+          %p
+            Most of the things we covered in this guide are also demonstrated by the quickstarts, from where you can get much more usage examples considering different usecases.
+          %p
+            Fell free to contribute with your own guides and help us to improve PicketLink ! Enjoy it !
