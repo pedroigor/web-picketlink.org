@@ -2,44 +2,15 @@
 layout: project
 ---
 
-%section#carousel
-  / Main hero unit for a primary marketing message or call to action
-  .row-fluid
-    .span12
-      %h2 PicketLink - Apache v2 Licensed Security Project! 
-  .row-fluid
-    .span8.offset2
-      #myCarousel.carousel.slide
-        %ol.carousel-indicators
-          %li.active{"data-slide-to" => "0", "data-target" => "#myCarousel"}
-          %li{"data-slide-to" => "1", "data-target" => "#myCarousel"}
-          %li{"data-slide-to" => "2", "data-target" => "#myCarousel"}
-          / Carousel items
-        .carousel-inner
-          .active.item
-            %a{:href => "#{site.base_url}/announcements/latest/"}
-              %img{:alt => "", :src => "http://design.jboss.org/picketlink/banner/images/picketlink_banner.png"}/
-          .item
-            %img{:alt => "", :src => "http://design.jboss.org/picketlink/banner/images/picketlink_banner_r1v4.png"}/
-          .item
-            %img{:alt => "", :src => "http://design.jboss.org/picketlink/banner/images/picketlink_banner_r1v4.png"}/
-        / Carousel nav
-        %a.carousel-control.left{"data-slide" => "prev", :href => "#myCarousel"} ‹
-        %a.carousel-control.right{"data-slide" => "next", :href => "#myCarousel"} ›
-
-
--# Attention row of projects
-#equalHeightsB.row-fluid.equalHero
-  .span4.well.offset4
+.row-fluid
+  .hero-unit
+    %h1 An Apache v2 Licensed Security Project!
     %p
-      %i.icon-shopping-cart.icon-1x.icon-2x.pull-left
-      %h3 ANNOUNCEMENTS
-    %p
-      PicketLink v2.6.0.CR1 Released
-    %p.center-icon
-      %a.btn.btn-success{:href => "#{site.base_url}/announcements/latest/"}
-        ANNOUNCEMENTS
-        %i.icon-circle-arrow-right
+      PicketLink is an umbrella project for security and identity management for Java Applications. PicketLink is an important project under the security offerings from JBoss.
+
+    .text-center
+      %a.btn.btn-large.btn-success.hero-button{ :href=>"news/2014/03/27/Release-2/"}Latest Version
+      %a.btn.btn-large.hero-button{ :href=>"gettingstarted"}Getting started
 
 -# First row of projects
 #equalHeightsB.row-fluid.equalHero
@@ -183,8 +154,3 @@ layout: project
       %a.btn.btn-primary{:href => "#{site.base_url}/testimonials/testimonial/"}
         Testimonials
         %i.icon-circle-arrow-right
-
-
-/ section containing Tweets
-.row-fluid
-  = partial( 'tweets.html.haml' )

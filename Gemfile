@@ -9,6 +9,7 @@ gem 'rb-fsevent', '~> 0.9.3'	# FSEvents API with Signals catching (without RubyC
 gem 'kramdown', '~> 1.0.1' # Kramdown works on all platforms, rdiscount only on mri
 gem 'therubyrhino', '~> 1.73', :platforms => :jruby # JavaScript on JRuby
 gem 'htmlcompressor', '~> 0.0.3' # Adds in HTML minification, helps remove the warning on awestruct startup
+gem 'rb-inotify', '~> 0.9'
 gem 'RedCloth'
 #gem 'fileutils', '0.7'
 gem 'listen', '0.7.3'
@@ -17,4 +18,3 @@ gem 'tilt', '~> 1.4.0'
 gem 'coderay'
 gem 'coffee-script'
 gem 'win32-open3-19', :platforms => :mingw
-

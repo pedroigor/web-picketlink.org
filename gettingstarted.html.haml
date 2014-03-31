@@ -7,6 +7,8 @@ title: Getting Started
   .hero-unit
     %h1 Getting Started
     %p Get Ready And Fast!!!
+    .text-left
+      %a.btn.btn-large.btn-success.hero-button{ :href=>"http://downloads.jboss.org/picketlink/2/latest/picketlink-installer-1.3.0.Final.zip"}Download the Installer
   .row-fluid
     .span12.well.post-bg
       .row-fluid
@@ -31,13 +33,15 @@ title: Getting Started
                 <br/>
                 %p This guide will show you how to quickly and easily enable your applications to use SAML for Single Sign-On. It will cover some core concepts of SAML and how they are reflected in PicketLink.
               %li
-                <b>Your First Identity Management Application (<i>Coming soon, take a look at our quickstarts</i>)</b><br/>
+                %a(href="idm_overview")Identity Management Overview<br/>
                 %p This guide will show you how to use the PicketLink Identity Management API to manage identity data (users, roles, groups, credentials, attributes, etc).
             %ul
           %p
             The objective of these guides is to make you familiar with some core concepts of PicketLink, so you can start applying them to real world usecases.
             For more details about PicketLink and advanced configuration/usages, please take a look at our
             %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html/") documentation.
+  .row-fluid
+    .span12.well.post-bg
       .row-fluid
         .span12
           %h2 Configuring PicketLink Dependencies to Your Project
@@ -83,6 +87,8 @@ title: Getting Started
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;scope&gt;runtime&lt;/scope&gt;
             &nbsp;&nbsp;&nbsp;&nbsp;&lt;/dependency&gt;
             &lt;/dependencies&gt;
+  .row-fluid
+    .span12.well.post-bg
       .row-fluid
         .span12
           %h3 Referencing PicketLink Modules when Using EAP 6 or WildFly
@@ -109,6 +115,8 @@ title: Getting Started
               &lt;/jboss-deployment-structure&gt;
           .well
             NOTE: Please, consider updating your EAP 6 or WildFly server with the latest PicketLink version using the installer.
+  .row-fluid
+    .span12.well.post-bg
       .row-fluid
         .span12
           %h2 Updating PicketLink Modules in JBoss Enterprise Application Platform 6 and WildFly
@@ -124,6 +132,8 @@ title: Getting Started
             Check our documentation for more details about the
             %a(href="https://docs.jboss.org/author/display/PLINK/WildFly+and+JBoss+Modules")PicketLink Modules
             in EAP 6 and WildFly.
+  .row-fluid
+    .span12.well.post-bg
       .row-fluid
         .span12
           %h2 Get, Deploy and Run A Lot of Example Applications !
@@ -134,6 +144,8 @@ title: Getting Started
             %a(href="https://github.com/jboss-developer/jboss-picketlink-quickstarts")repository.  
           %p
             Follow the instructions there to get them and deploy in a JBoss Enterprise Application Platform 6 or WildFly server.
+  .row-fluid
+    .span12.well.post-bg
       .row-fluid
         .span12
           %h2 Looking for more Information ?
@@ -142,7 +154,8 @@ title: Getting Started
           %p
             The documentation is available 
             %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html/")here.
-
+  .row-fluid
+    .span12.well.post-bg
       .row-fluid
         .span12
           %h2 Presentations
