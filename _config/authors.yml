@@ -4,3 +4,9 @@ asaldhan:
   location: "Chicago, IL"
   occupation: "PicketLink Master"
   avatar: asaldhan.jpg
+pedroigor:
+  name: "Pedro Igor"
+  bio: "PicketLink Team Member"
+  location: "Brasília, Brazil"
+  occupation: "Senior Software Engineer"
+  avatar: pedroigor.jpg

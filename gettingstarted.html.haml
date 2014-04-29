@@ -8,7 +8,46 @@ title: Getting Started
     %h1 Getting Started
     %p Get Ready And Fast!!!
     .text-left
-      %a.btn.btn-large.btn-success.hero-button{ :href=>"http://downloads.jboss.org/picketlink/2/latest/picketlink-installer-1.3.0.Final.zip"}Download the Installer
+      %a.btn.btn-large.btn-success.hero-button{ :href=>"http://downloads.jboss.org/picketlink/2/latest/picketlink-installer-2.6.0.CR2.zip"}Download the Installer
+  .row-fluid
+    .span12.well.post-bg
+      .row-fluid
+        .span12
+          %h2 How to Get Started ?
+          %p
+            This page provides useful information to get you started with PicketLink. We recommend you to follow these steps for a better and speed learning of PicketLink:
+            %ul
+              %li
+                <b>Download JBoss EAP or WildFly</b>
+                <br/>
+                PicketLink can be used on both servers. Use the
+                %a(href="http://downloads.jboss.org/picketlink/2/latest/picketlink-installer-2.6.0.CR2.zip") PicketLink Installer
+                to configure them with the latest version of the PicketLink modules and libraries.
+                <br/><br/>
+              %li
+                <b>Get the Quickstarts Up and Running</b>
+                <br/>
+                This is a very good way to learn from
+                %a(href="https://github.com/jboss-developer/jboss-picketlink-quickstarts")examples.
+                Use your favorite IDE to import the quickstarts and look at their sources. All quickstarts can be deployed on both JBoss EAP and WildFly.
+                <br/><br/>
+              %li
+                <b>Spend Some Time Reading the Available Guides</b>
+                <br/>
+                Each one cover an important PicketLink aspect. They explain some core concepts and make easier to understand the quickstarts.
+                <br/><br/>
+              %li
+                <b>Read the Reference Documentation</b>
+                <br/>
+                For more detailed information about a specific aspect of
+                %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html/")PicketLink.
+                <br/><br/>
+              %li
+                <b>Use the User Forum</b>
+                <br/>
+                And
+                %a(href="https://community.jboss.org/en/picketlink/content?filterID=contentstatus[published]~objecttype~objecttype[thread]")post
+                your questions and feedbacks.
   .row-fluid
     .span12.well.post-bg
       .row-fluid
@@ -52,14 +91,14 @@ title: Getting Started
 
           %p
             PicketLink libraries are available on
-            %a(href="https://repository.jboss.org/nexus/index.html#nexus-search;gav~org.picketlink~~2.6.0.CR1~~")  JBoss Release Repository
+            %a(href="https://repository.jboss.org/nexus/index.html#nexus-search;gav~org.picketlink~~2.6.0.CR2~~")  JBoss Release Repository
             and
-            %a(href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.picketlink%22%20AND%20v%3A%222.6.0.CR1%22") Maven Central.
+            %a(href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.picketlink%22%20AND%20v%3A%222.6.0.CR2%22") Maven Central.
           %p
             In order to provide a better experience when configuring the PicketLink dependencies to your project, we provide a Bill of Materials (BOM):
           %pre
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;properties&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;version.picketlink.javaee.bom&gt;2.6.0.CR1&lt;/version.picketlink.javaee.bom&gt;
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;version.picketlink.javaee.bom&gt;2.6.0.CR2&lt;/version.picketlink.javaee.bom&gt;
             &lt;/properties&gt;
 
             &lt;dependencyManagement&gt;
@@ -122,7 +161,7 @@ title: Getting Started
               ${JBOSS_HOME}/modules/system/layers/base/org/picketlink
           %p
             In order to provide an easy way to properly update the modules with the latest version, we provide the
-            %a(href="http://downloads.jboss.org/picketlink/2/latest/picketlink-installer-1.3.0.Final.zip") PicketLink Installer.
+            %a(href="http://downloads.jboss.org/picketlink/2/latest/picketlink-installer-2.6.0.CR2.zip") PicketLink Installer.
             Basically, it is just a simple Apache Ant script that knows how to get your server installation properly updated with the latest version of PicketLink. So you can always keep the latest features and fixes.
           %p
             Check our documentation for more details about the

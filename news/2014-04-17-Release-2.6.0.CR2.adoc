@@ -1,0 +1,35 @@
+= PicketLink 2.6.0.CR2 is out!
+pedroigor
+2014-04-17
+:revdate: 2014-04-17 00:00:00 +0100
+:awestruct-tags: [announcement, release]
+:awestruct-layout: news
+:source-highlighter: coderay
+
+The PicketLink team is pleased to announce the release of v2.6.0.CR2.
+
+This is a major release, containing several improvements and covering some new requirements, specially for HTML5+JS Mobile and RESTFul use cases.
+We've received excellent feedback from the community regarding v2.6.0CR1 release, and are looking forward to hearing more about your experiences
+with the new version until we finally reach Final.
+
+Some of the key aspects covered by this release include:
+
+* Stateless Authentication Model, ideal for RESTFul APIs Security and Token-based Authentication.
+* Better support to custom HTTP Authentication Schemes when using the AuthenticationFilter.
+* Security Tokens based on both
+http://self-issued.info/docs/draft-ietf-oauth-json-web-token.txt[JWT]
+and
+http://self-issued.info/docs/draft-ietf-jose-json-web-signature.txt[JWS]
+specifications. Ideal for people looking for a simple and flexible API to issue and validate JSON-based Security Tokens.
+* Connection Pooling to the LDAP Identity Store.
+* SAML Service Providers are now able to provide a Domain Chooser Page to select the appropriate IdP the user wants to authenticate against.
+* SAML-based example applications are now merged into the https://github.com/jboss-developer/jboss-picketlink-quickstarts[PicketLink Quickstarts Repository].
+* All quickstarts are ready to be deployed on both JBoss EAP and WildFly.
+
+The site is also updated with a few guides covering different aspects of PicketLink, giving you some background about some core concepts.
+More guides and articles are comming, keep an eye on the link:{base_url}/gettingstarted/[Getting Started] page.
+
+We would like to thank all the community for all contribution and feedback. Special thanks to Maximos Sapranidis for the HTML5+AngularJS+RESTFul Quickstart, which
+will be available very soon in the quickstarts repository. And also, Jonathan Fuerth for all improvements to the Authentication Filter.
+
+More details about the issues resolved by this version can be found on the https://issues.jboss.org/secure/ReleaseNote.jspa?projectId=12310923&version=12323642[Release Notes].
