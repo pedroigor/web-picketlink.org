@@ -9,7 +9,7 @@ Authorization is the process of specifying permissions or access rights to resou
 Refer to http://en.wikipedia.org/wiki/Authorization
 
 == PicketLink Documentation on Authorization/Permission
-http://docs.jboss.org/picketlink/2/latest/reference/html/ch10.html
+http://docs.jboss.org/picketlink/2/latest/reference/html-single/#chap-Identity_Management_-_Permissions_API_and_Permission_Management
 
 == Quickstarts for Authorization
 

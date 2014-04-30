@@ -9,7 +9,7 @@ Authentication is process of determining whether someone or something is in fact
 Refer to http://searchsecurity.techtarget.com/definition/authentication for more information.
 
 == PicketLink Documentation on Authentication
-http://docs.jboss.org/picketlink/2/latest/reference/html/ch02.html
+http://docs.jboss.org/picketlink/2/latest/reference/html-single/#chap-Authentication
 
 == Quickstarts for Authentication
 

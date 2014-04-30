@@ -7,7 +7,7 @@
 WS-Trust is an OASIS standard for Single Sign On and Identity Management for Web Services.
 
 == PicketLink Documentation on WS-Trust
-http://docs.jboss.org/picketlink/2/latest/reference/html/ch12.html
+http://docs.jboss.org/picketlink/2/latest/reference/html-single/#chap-Federation-1
 
 == Quickstarts for WS-Trust
 
