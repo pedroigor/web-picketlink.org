@@ -29,7 +29,7 @@ title: Identity Management Overview
               %li Configuration Overview
           %p
             We strongly recommend you to take a look at the
-            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e340") Identity Management Overview
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html-single/#chap-Identity_Management_-_Overview") Identity Management Overview
             section of the documentation.
           %p
             This guide is based on some example applications provided by our
@@ -44,18 +44,18 @@ title: Identity Management Overview
           %h3 Identity Model
           %p
             The
-            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e446")Identity Model
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html-single/#sect-Identity_Model")Identity Model
             is a set of classes that define the security structure of an application. In a nutshell, those classes will be used to represent your identity data and store it using the PicketLink IDM API. Most applications have their own
             set of classes and interfaces to represent users, roles, groups, permissions and so on. That is what the Identity Model is all about where PicketLink provides an abstract and flexible model from which you can create your own representations.
           %p
-          %img(src="http://docs.jboss.org/picketlink/2/latest/reference/html_single/diagrams/identitymodel.png" width="600px")
+          %img(src="http://docs.jboss.org/picketlink/2/latest/reference/html-single/diagrams/identitymodel.png" width="600px")
           %p
             In order to help users to start using PicketLink with the minimal effort, PicketLink provides a
-            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html_single/#picketlink-idm-basicmodel") Basic Model
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html-single/#chap-Identity_Management_-_Basic_Identity_Model") Basic Model
             based on some very common use cases. This model provides a specific representation for users, groups, roles, partitions, permissions and relationships like grants and group memberships. You can use it directly in your project or even use it
             as a template for your own model. That said, you're not forced to use the Basic Model in order to use PicketLink IDM. For more details about how to provide your own model, check our
-            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e498")documentation.
-          %img(src="http://docs.jboss.org/picketlink/2/latest/reference/html_single/diagrams/basicidentitymodel.png" width="600px")
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html-single/#sect-Creating_a_Custom_Identity_Model")documentation.
+          %img(src="http://docs.jboss.org/picketlink/2/latest/reference/html-single/diagrams/basicidentitymodel.png" width="600px")
           %p
             Understand the PicketLink Identity Model is crucial to use all that PicketLink IDM has to offer. Try to spend some time looking how the Basic Model was built to understand more how you can extend PickeLink IDM to better fit your requirements.
       .row-fluid
@@ -115,11 +115,11 @@ title: Identity Management Overview
             IdentityManager identityManager = this.partitionManager.createIdentityManager(partition);
           %p
             Another important aspect of Partition Management is that you can have different identity stores(eg.: LDAP and JPA) each one storing data for a specific partition. Take a look the this
-            %a(href="https://docs.jboss.org/picketlink/2/latest/reference/html_single/#providing_multiple_configurations") documentation
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html-single/#Providing_Multiple_Configurations") documentation
             for more information about how to store data using different partitions and identity stores.
           %p
             For more information about the the PartitionManager interface take a look at this
-            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e558")documentation.
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html-single/#chap-Identity_Management_-_Overview")documentation.
           %p
             You can also check the
             %a(href="https://github.com/pedroigor/picketlink-quickstarts/tree/master/picketlink-authentication-idm-multi-tenancy")PicketLink Multi-Tenancy Example
@@ -215,7 +215,7 @@ title: Identity Management Overview
             identityManager.remove(user); // let's remove user 'jdoe'
           %p
             You may notice that in all examples above the <b>
-            %a(href="https://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e1076")BasicModel</b>
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html-single/#chap-Identity_Management_-_Basic_Identity_Model")BasicModel</b>
             class is being used. As discussed in the <b>Identity Model</b> section, PicketLink provides a default identity model implementation, which we call Basic Model.
             The BasicModel class is basically a utility class with a lot of useful methods to easily manage all types provided by the Basic Model. As you can see in the examples, we're using the <b>BasicModel.getUser</b> to retrieve an User instance
             from the identity store. If you're using the Basic Model in your application, you'll find this class very helpful.
@@ -238,7 +238,7 @@ title: Identity Management Overview
             But again, you're not tied to use only those relationship types. The beauty of PicketLink is that you can even create your own relationships according with your requirements !
           %p
             For more information about relationship types and how to create your own types, plese check our
-            %a(href="https://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e542")documentation.
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html-single/#Creating_Custom_Relationships")documentation.
           %p
             The same way identity types are managed by the IdentityManager interface, relationships are managed by a specific interface called <b>RelationshipManager</b>. But differently than identity types, relationships
             don't belong to a specific partition. This is an important thing to keep in mind, actually they help to reference different identity types from different partitions. For example, you can store an user in Partition A and also
@@ -267,7 +267,7 @@ title: Identity Management Overview
             identityManager.add(grant);
           %p
             For more information about how to manage relationships, please look at the
-            %a(href="https://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e1148")documentation.
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html-single/#sect-Managing_Relationships")documentation.
           %p
             If we want to check if a role was granted to an user we can just use:
           .well
@@ -333,7 +333,7 @@ title: Identity Management Overview
             }
           %p
             Please check the
-            %a(href="https://docs.jboss.org/picketlink/2/latest/reference/html_single/#picketlink-idm-credentials") documentation
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html-single/#chap-Identity_Management_-_Credential_Validation_and_Management") documentation
             for more information about the built-in credential types and more details about the Credential API. There you will also find how to extend PicketLink and provide your own credential types.
           %p
             PicketLink also provides some useful quickstarts in this area:
@@ -368,7 +368,7 @@ title: Identity Management Overview
             PicketLink also supports queries based on attributes. What mean you can find a specific type by providing the attribute name and value you want to match.
           %p
             For more information about Attribute Management, check our
-            %a(href="https://docs.jboss.org/picketlink/2/latest/reference/html_single/#picketlink-idm-attributes")documentation.
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html-single/#chap-Identity_Management_-_Attribute_Management")documentation.
       .row-fluid
         .span12
           %h3 Configuration Overview
@@ -412,7 +412,7 @@ title: Identity Management Overview
             Actually, we strongly recommend users to design their own identity model (probably using the Basic Model as an example) and also use the picketlink-idm-simple-schema as an example about how to map your identity model types using JPA.
           %p
             Take a look at the
-            %a(href="https://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e1528")JPA Identity Store
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html-single/#chap-Identity_Management_-_Working_with_JPA")JPA Identity Store
             documentation for more details.
           %h4 Providing Your Own Configuration
           %p
@@ -513,7 +513,7 @@ title: Identity Management Overview
             }
           %p
             Please take a look at the
-            %a(href="https://docs.jboss.org/picketlink/2/latest/reference/html_single/#picketlink-idm-configuration")Identity Configuration
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html-single/#chap-Identity_Management_-_Configuration")Identity Configuration
             section for more details about the Configuration API and the IDM configuration.
       .row-fluid
         .span12

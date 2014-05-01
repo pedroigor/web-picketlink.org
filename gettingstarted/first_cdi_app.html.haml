@@ -172,7 +172,7 @@ title: First PicketLink CDI Application
             is very handy for demos, during development and testing. But when doing things for real, you will probably prefer a LDAP or a Database as your Identity Store.
           %p
             PicketLink supports differents identity stores, providing out-of-the-box implementations using LDAP and JPA. For more information about how to configure PicketLink IDM, please check our
-            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html_single/#picketlink-idm-configuration")documentation.
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html-single/#chap-Identity_Management_-_Configuration")documentation.
           %p
             Another important thing to consider in this bean is the usage of the <b>IdentityManager</b>. This bean is used to manage identity objects within the scope of a partition.
             Some examples of identity objects are users, groups and roles, although PicketLink is not limited to just these.
@@ -182,7 +182,7 @@ title: First PicketLink CDI Application
             You can even provide your credential types and handlers. PicketLink also provides built-in support for other credential types such as DIGEST, Two-Factor Authentication and X509 Certificates.
           %p
             For more information about PicketLink Identity Manager API, please check our
-            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html_single/#picketlink-idm-overview")documentation.
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html-single/#chap-Identity_Management_-_Overview")documentation.
       .row-fluid
         .span12
           %h3 Creating the User Registration JSF Page
@@ -255,7 +255,7 @@ title: First PicketLink CDI Application
             This bean represents the authenticated user for the current session, and provides many useful methods for controlling the authentication process and querying the user's assigned privileges.
           %p
             For more information about the Identity bean, check our
-            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e125")documentation.
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html-single/#sect-Authentication_API_-_the_code_xmlnshttpdocbook.orgnsdocbookIdentitycode_bean")documentation.
           %p
             This bean is able to be referenced directly from JSF pages using EL (@Named("identity")) and also able to be injected into other CDI beans using the @Inject annotation. In our simple application, we don't need to create
             an authentication bean just to wrap the Identity bean, we can just use it directly from the JSF page. The approach you decide to take depends on your requirements. If you want to perform some additional logic before
@@ -271,7 +271,7 @@ title: First PicketLink CDI Application
             PicketLink allows you to use any type of credential you want, including your own custom credential types. The DefaultLoginCredentials is just an out-of-the-box implementation of the <b>Credentials</b> interface that supports a user ID and a credential value.
           %p
             For more information about the DefaultLoginCredentials bean, check our
-            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e320")documentation.
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html-single/#DefaultLoginCredentials")documentation.
           %p
             Now that you know how to check if a user is authenticated and how to set their credentials and invoke the authentication process, let's take a look at how users are authenticated.
             The page above defines a login button which is configured to invoke the <b>identity.login()</b> method. The login() method is the primary point of entry for the authentication process.
@@ -283,9 +283,9 @@ title: First PicketLink CDI Application
 
           %p
             You're not forced to use always the same Authenticator, it is also possible to provide your own implementation and code the authentication process the way you want. For more details, take a look at our
-            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e249")documentation.
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html-single/#sect-The_Authentication_Process")documentation.
             You can even support multiple authentication processes by providing
-            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html_single/#d5e285")multiple authenticators.
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html-single/#Multiple_Authenticator_Support")multiple authenticators.
           %p
             Another important Identity bean method is the <b>identity.logout()</b>. This method is responsible to logout users and invalidate their security context.
           %pre
