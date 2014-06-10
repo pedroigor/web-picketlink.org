@@ -1,0 +1,34 @@
+= PicketLink 2.6.0.CR4 is out!
+pedroigor
+2014-06-06
+:revdate: 2014-06-06 00:00:00 +0100
+:awestruct-tags: [announcement, release]
+:awestruct-layout: news
+:source-highlighter: coderay
+
+The PicketLink team is pleased to announce the release of v2.6.0.CR4.
+
+This is a major release, containing several improvements and covering some new requirements, specially for
+http://docs.jboss.org/picketlink/2/latest/reference/html-single/#chap-Authorization[authorization].
+We are looking forward to hearing more about your experiences with the new version until we finally reach Final in the next month.
+
+Some of the key aspects covered by this release include:
+
+* Stateless Authentication Model Reviewed. After some discussions we found better to remove the stereotype and provide a configuration API
+for PicketLink Base Module. From where you can enable the stateless behavior of the Identity bean.
+* Configuration API for the Base Module, encapsulating both IDM and Authentication configurations. You can now observe a SecurityConfigurationEvent
+and provide all them from a single place.
+* Security Tokens based on both
+http://self-issued.info/docs/draft-ietf-oauth-json-web-token.txt[JWT]
+and
+http://self-issued.info/docs/draft-ietf-jose-json-web-signature.txt[JWS]
+specifications. Ideal for people looking for a simple and flexible API to issue and validate JSON-based Security Tokens.
+* Built-in Security Annotations for Authorization. Now you can secure your beans and methods very easily and check for roles, groups,
+partitions, use EL-based expressions and check if the user is authenticated. Or even define your own security annotation and authorization logic!
+* PicketLink uber jar. This is a new artifact/dependency that packages the most common PicketLink modules and dependencies in a single JAR. So you don't need to specify
+them separately in your project. Making a lot easier to configure the PicketLink dependencies.
+* Quickstarts were updated to use the new authorization features. Check them out !
+
+On the next weeks we're going to focus on documentation, guides and quickstarts. Preparing for Final ...
+
+More details about the issues resolved by this version can be found on the https://issues.jboss.org/secure/ReleaseNote.jspa?projectId=12310923&version=12323642[Release Notes].

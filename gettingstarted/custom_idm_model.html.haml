@@ -1,0 +1,65 @@
+---
+layout: project
+title: Custom Identity Model
+---
+
+.row-fluid
+  .row-fluid
+    .span12.well.post-bg
+      .row-fluid
+        .span12
+          %h2 Custom Identity Model
+          %p
+            This guide will show you how to use the PicketLink Identity Management API to design and implement your own identity model accordingly with your requirements.
+          %p
+            PicketLink IDM provides a very extensible
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html/sect-Identity_Model.html") Identity Model
+            from which you can build your own representation of security-related entities such as users, roles, groups, devices, applications, partitions,
+            relationships between those entities and so forth.
+          %p
+            It also provides a default implementation supporting some very common security concepts, the
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html/chap-Identity_Management_-_Basic_Identity_Model.html") Basic Model.
+            The Basic Model can be used for most applications, covering some basic security requirements and representations for users, roles, groups,
+            grant roles to users or turn them as members of different groups.
+          %p
+            However, some applications may have a more complex set of requirements, requiring different entities or types to represent a specific
+            security-related concept not covered by default. This guide will show you how to satisfy those specific requirements and how to
+            implement them using the PicketLink IDM API. Once you read this guide you should be able to:
+          %ul
+            %li
+              Understand what is an Identity Model
+            %li
+              Understand the limitations of the Basic Model
+            %li
+              Understand when you need to provide your own Identity Model
+            %li
+              Extend PicketLink IDM to provide your own Identity Model
+          %h2 Choosing and Designing an Identity Model to Your Application
+          %p
+            Before enable security into your application you should ask yourself about what it needs in order to represent all entities
+            envolved with your security requirements.
+          %p
+            Let's say that some of these requirements are username/passoword based authentication and RBAC (Role-based Access Control) authorization, pretty common in most applications.
+            With that in mind you would probably need something to represent an User, a Password-based Credential and Roles. This is exactly what
+            an Identity Model is about, a representation of all security-related entities required by your application in order to support its security
+            requirements.
+          %p
+            In this guide we're going to consider the following security requirements to design a identity model:
+          %ul
+            %li
+              An employee must be authenticated using an username/password credential.
+            %li
+              An employee belongs to a single Organization Unit. Where organization units are organized in a tree and a child OU inherits the security policies defined by its parent.
+            %li
+              A specific employee or OU can access one or more applications. The latter means that all employees from a OU can access a specific application.
+            %li
+              Employees and OUs have different access levels. Where resources are protected accordingly with those access levels. The employees from a specific OU inherit the privileges
+              from the OU they belong to.
+          %p
+            Considering these requirements, we can define an identity model as follows:
+          %img(src="#{site.base_url}/images/custom_idm_model.png" width="400px" height="400px" )
+
+
+
+
+

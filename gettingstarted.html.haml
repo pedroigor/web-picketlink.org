@@ -8,7 +8,7 @@ title: Getting Started
     %h1 Getting Started
     %p Get Ready And Fast!!!
     .text-left
-      %a.btn.btn-large.btn-success.hero-button{ :href=>"http://downloads.jboss.org/picketlink/2/latest/picketlink-installer-2.6.0.CR3.zip"}Download the Installer
+      %a.btn.btn-large.btn-success.hero-button{ :href=>"http://downloads.jboss.org/picketlink/2/latest/picketlink-installer-2.6.0.CR4.zip"}Download the Installer
   .row-fluid
     .span12.well.post-bg
       .row-fluid
@@ -21,7 +21,7 @@ title: Getting Started
                 <b>Download JBoss EAP or WildFly</b>
                 <br/>
                 PicketLink can be used on both servers. Use the
-                %a(href="http://downloads.jboss.org/picketlink/2/latest/picketlink-installer-2.6.0.CR3.zip") PicketLink Installer
+                %a(href="http://downloads.jboss.org/picketlink/2/latest/picketlink-installer-2.6.0.CR4.zip") PicketLink Installer
                 to configure them with the latest version of the PicketLink modules and libraries.
                 <br/><br/>
               %li
@@ -96,46 +96,10 @@ title: Getting Started
           %h2 Configuring PicketLink Dependencies to Your Project
       .row-fluid
         .span12
-          %h3 PicketLink Bill of Materials (BOM)
-          %p This is specially useful if you're using Apache Maven in your project and want to get the PicketLink dependencies properly configured in your project.
-
+          %h3 If You're Using Apache Maven
           %p
-            PicketLink libraries are available on
-            %a(href="https://repository.jboss.org/nexus/index.html#nexus-search;gav~org.picketlink~~2.6.0.CR3~~")  JBoss Release Repository
-            and
-            %a(href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.picketlink%22%20AND%20v%3A%222.6.0.CR3%22") Maven Central.
-          %p
-            In order to provide a better experience when configuring the PicketLink dependencies to your project, we provide a Bill of Materials (BOM):
-          %pre
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;properties&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;version.picketlink.javaee.bom&gt;2.6.0.CR3&lt;/version.picketlink.javaee.bom&gt;
-            &lt;/properties&gt;
-
-            &lt;dependencyManagement&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;dependencies&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;dependency&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;org.picketlink&lt;/groupId&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;picketlink-javaee-6.0&lt;/artifactId&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;type&gt;pom&lt;/type&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;scope&gt;import&lt;/scope&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;${version.picketlink.javaee.bom}&lt;/version&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/dependency&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;/dependencies&gt;
-            &lt;/dependencyManagement&gt;
-
-            &lt;dependencies&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;dependency&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;org.picketlink&lt;/groupId&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;picketlink-api&lt;/artifactId&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;scope&gt;compile&lt;/scope&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;/dependency&gt;
-
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;dependency&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;org.picketlink&lt;/groupId&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;picketlink-impl&lt;/artifactId&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;scope&gt;runtime&lt;/scope&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;/dependency&gt;
-            &lt;/dependencies&gt;
+            Please, follow the instructions at
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html/Maven_Dependencies.html") Maven Dependencies.
       .row-fluid
         .span12
           %h3 Referencing PicketLink Modules when Using EAP 6 or WildFly
@@ -171,7 +135,7 @@ title: Getting Started
               ${JBOSS_HOME}/modules/system/layers/base/org/picketlink
           %p
             In order to provide an easy way to properly update the modules with the latest version, we provide the
-            %a(href="http://downloads.jboss.org/picketlink/2/latest/picketlink-installer-2.6.0.CR3.zip") PicketLink Installer.
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html/PicketLink_Installer.html") PicketLink Installer.
             Basically, it is just a simple Apache Ant script that knows how to get your server installation properly updated with the latest version of PicketLink. So you can always keep the latest features and fixes.
           %p
             Check our documentation for more details about the
@@ -183,7 +147,9 @@ title: Getting Started
         .span12
           %h2 Get, Deploy and Run A Lot of Example Applications !
           %p
-            PicketLink provides a plenty of quickstarts to let you drive quickly to use some of the most important features.
+            PicketLink provides a plenty of
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html/chap-PicketLink_Quickstarts.html") quickstarts
+            to let you drive quickly to some of the most important features.
           %p
             The quickstarts are available in the PicketLink Quickstarts 
             %a(href="https://github.com/jboss-developer/jboss-picketlink-quickstarts")repository.  
