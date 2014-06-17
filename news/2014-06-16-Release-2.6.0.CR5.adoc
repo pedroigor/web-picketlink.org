@@ -1,0 +1,18 @@
+= PicketLink 2.6.0.CR5 is out!
+pedroigor
+2014-06-06
+:revdate: 2014-06-16 00:00:00 +0100
+:awestruct-tags: [announcement, release]
+:awestruct-layout: news
+:source-highlighter: coderay
+
+The PicketLink team is pleased to announce the release of v2.6.0.CR5.
+
+Some of the key aspects covered by this release include:
+
+* Identity Type and Relationship Stereotypes. More information here.
+* Minor fixed to the LDAP Identity Store when using MSAD.
+* Minor fixes to SAML support in WildFly.
+* Better support to HTML5 and BASIC authentication. In IE and Chrome the authentication dialog is no longer displayed when users provide an invalid credential.
+
+More details about the issues resolved by this version can be found on the https://issues.jboss.org/secure/ReleaseNote.jspa?projectId=12310923&version=12325105[Release Notes].
