@@ -47,19 +47,19 @@ title: Custom Identity Model
             In this guide we're going to consider the following security requirements to design a identity model:
           %ul
             %li
-              An employee must be authenticated using an username/password credential.
+              Support multiple security domains or realms, where each realm defines a set of security policies such as a key pair and HTTP/SSL enforcement.
             %li
-              An employee belongs to a single Organization Unit. Where organization units are organized in a tree and a child OU inherits the security policies defined by its parent.
+              A security domain may have one or multiple applications. Those applications inherit all policies defined by the security domain they belong.
             %li
-              A specific employee or OU can access one or more applications. The latter means that all employees from a OU can access a specific application.
+              A security domain may have one or multiple users. Where each user is allowed to access a set of applications from a specific security domain.
             %li
-              Employees and OUs have different access levels. Where resources are protected accordingly with those access levels. The employees from a specific OU inherit the privileges
-              from the OU they belong to.
+              A security domain may have one or more roles. In this case, they are visible by all applications for a specific realm.
+            %li
+              An application may have one or more roles. In this case, they are not shared by other applications.
+            %li
+              Users or groups are granted with roles. When granted to a group, all its members inherit the roles granted to the group.
+            %li
+              Users must be authenticated using an username/password credential
           %p
             Considering these requirements, we can define an identity model as follows:
-          %img(src="#{site.base_url}/images/custom_idm_model.png" width="400px" height="400px" )
-
-
-
-
-
+          %img(src="#{site.base_url}/images/custom_idm_model.png")
