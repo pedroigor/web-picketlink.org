@@ -138,32 +138,34 @@ title: First PicketLink CDI Application
           %h3 Creating the User Registration Bean
           %p
             Now that CDI is properly configured, we can start creating some beans. The first bean we'll create is responsible for creating new users using the <b>PicketLink Identity Management API</b>.
-          %pre
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Named
-            &nbsp;&nbsp;@RequestScoped
-            &nbsp;&nbsp;public class UserRegistration {
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Inject
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>private IdentityManager identityManager;</b><br/>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;private String loginName;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;private String firstName;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;private String lastName;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;private String password;<br/>
+          :markdown
+            <pre class="brush: java;">
+            @Named
+            @RequestScoped
+            public class UserRegistration {
+              @Inject
+              private IdentityManager identityManager;
+              private String loginName;
+              private String firstName;
+              private String lastName;
+              private String password;<br/>
 
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public String register() {
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User newUser = new User(this.loginName);<br/>
+              public String register() {
+                User newUser = new User(this.loginName);<br/>
 
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;newUser.setFirstName(this.firstName);
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;newUser.setLastName(this.lastName);<br/>
+                newUser.setFirstName(this.firstName);
+                newUser.setLastName(this.lastName);
 
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>this.identityManager.add(newUser);</b><br/>
+                this.identityManager.add(newUser);
 
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Password password = new Password(this.password);<br/>
+                Password password = new Password(this.password);<br/>
 
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>this.identityManager.updateCredential(newUser, password);</b><br/>
+                this.identityManager.updateCredential(newUser, password);
 
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return "/signin.xhtml";
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
-            &nbsp;&nbsp;}
+                return "/signin.xhtml";
+              }
+            }
+            </pre>
           .well
             This is a very simple bean. Fields are not being validated to highlight only the important bits of code for the sake of this guide. Don't forget to validate all fields when working with a real world app !
           %p

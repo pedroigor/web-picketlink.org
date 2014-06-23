@@ -2,7 +2,6 @@
 layout: project
 title: Custom Identity Model
 ---
-
 .row-fluid
   .row-fluid
     .span12.well.post-bg
@@ -15,15 +14,15 @@ title: Custom Identity Model
             PicketLink IDM provides a very extensible
             %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html/sect-Identity_Model.html") Identity Model
             from which you can build your own representation of security-related entities such as users, roles, groups, devices, applications, partitions,
-            relationships between those entities and so forth.
+            relationships between them and so forth.
           %p
-            It also provides a default implementation supporting some very common security concepts, the
+            It also provides a default implementation to support some very common security concepts, the
             %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html/chap-Identity_Management_-_Basic_Identity_Model.html") Basic Model.
             The Basic Model can be used for most applications, covering some basic security requirements and representations for users, roles, groups,
             grant roles to users or turn them as members of different groups.
           %p
-            However, some applications may have a more complex set of requirements, requiring different entities or types to represent a specific
-            security-related concept not covered by default. This guide will show you how to satisfy those specific requirements and how to
+            However, some applications may have a more complex set of requirements and require different types in order to better represent their own
+            security-related concepts. This guide will show you how to satisfy those specific requirements and how to
             implement them using the PicketLink IDM API. Once you read this guide you should be able to:
           %ul
             %li
@@ -33,33 +32,1343 @@ title: Custom Identity Model
             %li
               Understand when you need to provide your own Identity Model
             %li
-              Extend PicketLink IDM to provide your own Identity Model
+              Extend PicketLink IDM and provide your own Identity Model
+            %li
+              How to Use PicketLink JPA Mapping Annotations to store your own Identity Model
+          %p
+            <b>All code for this guide is available from the
+            %a(href="https://github.com/jboss-developer/jboss-picketlink-quickstarts/tree/master/picketlink-idm-custom-identity-model") Custom Identity Model Quickstart.
+            Please, check it out for a full working example.</b>
           %h2 Choosing and Designing an Identity Model to Your Application
           %p
-            Before enable security into your application you should ask yourself about what it needs in order to represent all entities
-            envolved with your security requirements.
+            Before enabling security into your application you should ask yourself about what it needs in order to represent all entities
+            involved with your security requirements.
           %p
-            Let's say that some of these requirements are username/passoword based authentication and RBAC (Role-based Access Control) authorization, pretty common in most applications.
-            With that in mind you would probably need something to represent an User, a Password-based Credential and Roles. This is exactly what
-            an Identity Model is about, a representation of all security-related entities required by your application in order to support its security
+            Let's say that some of these requirements are password-based authentication and RBAC (Role-based Access Control), pretty common in most applications.
+            You would probably need something to represent users, roles and password-based credentials. And this is exactly what
+            an Identity Model is, a representation of entities required by your application in order to support its security
             requirements.
           %p
             In this guide we're going to consider the following security requirements to design a identity model:
           %ul
             %li
-              Support multiple security domains or realms, where each realm defines a set of security policies such as a key pair and HTTP/SSL enforcement.
+              Support multiple security domains or realms, where each realm defines a set of security policies such as a key pair, HTTP/SSL enforcement,
+              maximum number of failed login attempts.
             %li
-              A security domain may have one or multiple applications. Those applications inherit all policies defined by the security domain they belong.
+              A security domain may have one or multiple applications. They inherit all policies defined by the security domain they belong.
             %li
               A security domain may have one or multiple users. Where each user is allowed to access a set of applications from a specific security domain.
             %li
-              A security domain may have one or more roles. In this case, they are visible by all applications for a specific realm.
+              A security domain may have one or more roles. They are visible by all applications for a specific realm, also called global roles.
             %li
-              An application may have one or more roles. In this case, they are not shared by other applications.
+              A security domain may have one or more groups. They are visible by all applications for a specific realm, also called global groups.
             %li
-              Users or groups are granted with roles. When granted to a group, all its members inherit the roles granted to the group.
+              An application may have one or more roles. They are not shared by other applications.
+            %li
+              An application may have one or more groups. They are not shared by other applications.
+            %li
+              Users and groups are granted with roles. When granted to a group, all its members inherit the roles granted to the group.
+            %li
+              Applications are accessible only from authorized users. If a group is authorized, all its members are allowed to access an application.
             %li
               Users must be authenticated using an username/password credential
           %p
             Considering these requirements, we can define an identity model as follows:
-          %img(src="#{site.base_url}/images/custom_idm_model.png")
+          %img(src="#{site.base_url}/images/custom_idm_model_640_480.png")
+          %h2 Partition, IdentityType, Account and Relationship Types
+          %p
+            PicketLink defines four basic types to represent security-related entities:
+          %ul
+            %li
+              <code>Partition</code>
+            %li
+              <code>IdentityType</code>
+            %li
+              <code>Account</code>
+            %li
+              <code>Relationship</code>
+          .well
+            Please, take a look at the
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html-single/#sect-Identity_Model") documentation
+            for more details about each one.
+          %h2
+            Creating Partition Types
+          %p
+            Considering the requirements, the following types represent a <code>Partition</code>:
+          %ul
+            %li
+              Realm
+            %li
+              Application
+          %p
+            In PicketLink, <code>IdentityType</code> instances are associated with a single partition. A partition defines a scope for
+            identity types, providing a logical separation between them. Types stored in a partition are only accessible from
+            it. For instance, users belong to a realm and are accessible by all its applications. But users from a realm are not accessible to other realms.
+            The same applies for roles, where roles defined by a realm are accessible to all applications, representing "global" roles.
+          %p
+            Applications can also have their own roles and groups. Roles and groups can not be shared between applications. For this reason,
+            we also need to consider them as partitions as well.
+          .well
+            Please, take a look at
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html/sect-Partition_Management.html") Partition Management
+            for more information.
+          %p
+            Let's start by defining the <code>Realm</code> partition.
+          :markdown
+            <pre class="brush: java;">
+            @IdentityPartition(supportedTypes = {Application.class, User.class, Role.class, Group.class})
+            public class Realm extends AbstractPartition {
+
+              @AttributeProperty
+              private boolean enforceSSL;
+
+              @AttributeProperty
+              private int numberFailedLoginAttempts;
+
+              @AttributeProperty
+              private byte[] publickKey;
+
+              @AttributeProperty
+              private byte[] privateKey;
+
+              // PicketLink requires a default constructor to create and populate instances using reflection
+              private Realm() {
+                this(null);
+              }
+
+              public Realm(String name) {
+                super(name);
+              }
+
+            }
+            </pre>
+          %p
+            The <code>AbstractPartition</code> provides a default implementation for the <code>Partition</code> interface, from which
+            all partition types should implement directly or indirectly. Basically, what this interface defines is a getter to obtain
+            the partition name. All partitions must have a unique name.
+          %p
+            When creating a partition type, you must also specify which types are supported and can be stored on it. The <code>@IdentityPartition</code> annotation
+            tells PicketLink which types are supported by a partition. In this case, we're saying that only
+            <code>Application</code>, <code>User</code>, <code>Role</code> and <code>Group</code> types can be stores in a <code>Realm</code>. If you try to add some other type, PicketLink will not allow.
+          %p
+            Partition properties are annotated with <code>@AttributeProperty</code>. This annotation
+            tells to PicketLink that a property must be stored and that it represents some state for a specific type. For <code>Realm</code>,
+            we're storing a key pair and the maximum number of failed login attempts.
+          %p
+            Now, is just a matter of use the <code>PartitionManager</code> to manage instances of <code>Realm</code> as follows:
+          :markdown
+            <pre class="brush: java;">
+            Realm acme = new Realm("Acme");
+
+            acme.setEnforceSSL(true);
+
+            // let's generate a keypair for the realm
+            KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+
+            acme.setPrivateKey(keyPair.getPrivate().getEncoded());
+            acme.setPublickKey(keyPair.getPublic().getEncoded());
+
+            acme.setNumberFailedLoginAttempts(3);
+
+            // stores the realm
+            this.partitionManager.add(acme);
+
+            assertNotNull("Realm identifier not generated.", acme.getId());
+
+            // retrieves the realm and check state
+            Realm storedRealm = this.partitionManager.getPartition(Realm.class, acme.getName());
+
+            assertNotNull("Realm not stored.", storedRealm);
+            assertEquals(acme.isEnforceSSL(), storedRealm.isEnforceSSL());
+            assertEquals(acme.getNumberFailedLoginAttempts(), storedRealm.getNumberFailedLoginAttempts());
+            assertEquals(acme.getPrivateKey(), storedRealm.getPrivateKey());
+            assertEquals(acme.getPublickKey(), storedRealm.getPublickKey());
+            </pre>
+          %p
+            The code above creates a new <code>Realm</code>, populates it with some data, stores it and
+            retrieves it from IDM.
+          .well
+            If you're not familiar with PicketLink Identity Management API, please take a look at
+            %a(href="../idm_overview")Identity Management Overview
+            guide.
+          %p
+            The same steps can be followed to create the <code>Application</code> partition, with a little difference. We now implement
+            the <code>Partition</code> interface directly.
+          :markdown
+            <pre class="brush: java;">
+            @IdentityPartition(supportedTypes = {Role.class, Group.class})
+            public class Application extends AbstractIdentityType implements Partition {
+
+              @AttributeProperty
+              @Unique
+              private String name;
+
+              public String getName() {
+                return this.name;
+              }
+
+              public void setName(String name) {
+                this.name = name;
+              }
+
+            }
+          %p
+            You may notice that <code>Application</code> is extending <code>AbstractIdentityType</code>.
+            The reason for that is that an application can also be used in relationships in order to authorize access from users.
+            And for that it must be also an <code>IdentityType</code>. We'll cover identity types in the next sections.
+          :markdown
+            <pre class="brush: java;">
+            // get the realm where the application should be stored
+            Realm acme = this.partitionManager.getPartition(Realm.class, REALM_ACME_NAME);
+
+            assertNotNull(acme);
+
+            // we need an identity manager instance for acme realm. so we can store the application
+            IdentityManager identityManager = this.partitionManager.createIdentityManager(acme);
+            Application salesApplication = new Application("Sales Application");
+
+            // stores the application in the acme partition
+            identityManager.add(salesApplication);
+
+            IdentityQuery<Application> query = identityManager.createIdentityQuery(Application.class);
+
+            // let's check if the application is stored by querying by the identifier
+            query.setParameter(Application.ID, salesApplication.getId());
+
+            List<Application> applications = query.getResultList();
+
+            assertEquals(1, applications.size());
+
+            Application storedApplication = applications.get(0);
+
+            assertEquals(salesApplication.getName(), storedApplication.getName());
+
+            Application salesApplicationPartition = new Application(salesApplication.getName());
+
+            // now, we also need to create a partition for this application
+            this.partitionManager.add(salesApplicationPartition);
+
+            // applications have two distinct representations: identity type and partition. They mean different things.
+            assertFalse(storedApplication.getId().equals(salesApplicationPartition.getId()));
+            </pre>
+          %p
+            The code above is an example about how applications must be managed. First, we store the <code>Application</code> as an
+            <code>IdentityType</code> using the <code>IdentityManager</code>. This makes the application accessible only from a specific partition, in this case <i>Acme</i>.
+            Right after, we create a new partition to represent the application and to store its own roles and groups.
+          %h2
+            Creating an IdentityType
+          %p
+            Considering the requirements, the following types represent an <code>IdentityType</code>:
+          %ul
+            %li
+              Role
+            %li
+              Group
+            %li
+              Application
+          %p
+            In PicketLink, an <code>IdentityType</code> is used to represent any security-related entity such as roles, groups, devices,
+            applications, organization units and so forth. In a nutshell, identity types must implement the <code>IdentityType</code> interface.
+            To make life easier, PicketLink also provides <code>AbstractIdentityType</code>, which is a base class with a default implementation.
+          %p
+            <b>Identity types are always associated with a partition and can not be accessed from other partitions</b>. They can also
+            participate in relationships to associate an user or group with a role or add an user as a member of a group.
+          .well
+            Please, take a look at
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html/sect-Creating_a_Custom_Identity_Model.html") Custom Identity Model
+            for more information.
+          %p
+            We have already covered the creation of the <code>Application</code>, let's take a look now how to create the <code>Role</code> and
+            <code>Group</code> types:
+          :markdown
+            <pre class="title: 'Role Identity Type'; brush: java;">
+            @IdentityStereotype(ROLE)
+            public class Role extends AbstractIdentityType {
+
+                /**
+                 * A query parameter used to query roles by name.
+                 */
+                public static final QueryParameter NAME = QUERY_ATTRIBUTE.byName("name");
+
+                @StereotypeProperty(IDENTITY_ROLE_NAME)
+                @AttributeProperty
+                @Unique
+                private String name;
+
+                // PicketLink requires a default constructor to create and populate instances using reflection
+                private Role() {
+                    this(null);
+                }
+
+                public Role(String name) {
+                    this.name = name;
+                }
+
+                // getters and setters
+
+            }
+            </pre>
+          :markdown
+            <pre class="title: 'Group Identity Type'; brush: java;">
+            @IdentityStereotype(GROUP)
+            public class Group extends AbstractIdentityType {
+
+                /**
+                 * A query parameter used to query groups by name.
+                 */
+                public static final QueryParameter NAME = QUERY_ATTRIBUTE.byName("name");
+
+                /**
+                 * A query parameter used to query groups by parent.
+                 */
+                public static final QueryParameter PARENT = QUERY_ATTRIBUTE.byName("parent");
+
+                @StereotypeProperty(IDENTITY_GROUP_NAME)
+                @AttributeProperty
+                @Unique
+                private String name;
+
+                /**
+                 * The parent group.
+                 */
+                @AttributeProperty
+                private Group parent;
+
+                // PicketLink requires a default constructor to create and populate instances using reflection
+                private Group() {
+                    this(null);
+                }
+
+                public Group(String name) {
+                    this.name = name;
+                }
+
+                // getters and setters
+
+            }
+            </pre>
+          %p
+            As mentioned before, identity types must implement <code>IdentityType</code>. Both <code>Role</code> and
+            <code>Group</code> are extending <code>AbstractIdentityType</code>, which is a base class for custom identity types.
+            You may also notice the usage of <code>@AttributeProperty</code>. This annotation tells to PicketLink that a
+            property must be stored and that it represents some state for a specific type.
+          %p
+            Some identity types are very common between different use cases and requirements, like roles, groups and users.
+            In PicketLink, those common concepts are represented as
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html/sect-Stereotypes.html") Stereotypes.
+            Both <code>Role</code> and <code>Group</code> types are annotated with the <code>IdentityStereotype</code>.
+            This annotation tells to PicketLink which stereotype is related with a specific type. This is a very important configuration
+            if you want to integrate your custom types with some built-in features provided by PicketLink, like authorization.
+          %p
+            Some identity types represents a hierarchy. For instance, groups usually have a parent-child relationship between them.
+            PicketLink allows you to represent hierarchies by just having a property with the same type where it is declared.
+          :markdown
+            <pre class="brush: java;">
+            @IdentityStereotype(GROUP)
+            public class Group extends AbstractIdentityType {
+
+                /**
+                 * The parent group.
+                 */
+                @AttributeProperty
+                private Group parent;
+
+            }
+            </pre>
+          %p
+            PicketLink also provides a simple Query API which you can use to retrieve instances based on query parameters. Usually,
+            a query parameter is just a reference to a specific property of your type.:
+          :markdown
+            <pre class="brush: java;">
+            @IdentityStereotype(GROUP)
+            public class Group extends AbstractIdentityType {
+
+                /**
+                 * A query parameter used to query groups by name.
+                 */
+                public static final QueryParameter NAME = QUERY_ATTRIBUTE.byName("name");
+
+                /**
+                 * A query parameter used to query groups by parent.
+                 */
+                public static final QueryParameter PARENT = QUERY_ATTRIBUTE.byName("parent");
+
+            }
+            </pre>
+          %p
+            This is the only thing you need to start querying instances based on any property annotated with <code>@AttributeProperty</code>.
+          :markdown
+            <pre class="brush: java;">
+            // get the realm where global groups are stored
+            Application applicationPartition = this.partitionManager.getPartition(Application.class, APPLICATION_NAME);
+
+            // we need an identity manager instance for applicationPartition realm. so we can store the group
+            IdentityManager identityManager = this.partitionManager.createIdentityManager(applicationPartition);
+            Group salesUnit = new Group("Sales Unit");
+
+            // stores the sales unit
+            identityManager.add(salesUnit);
+
+            Group salesManagers = new Group("Sales Managers");
+
+            // we set the managers group as a child of sales unit
+            salesManagers.setParent(salesUnit);
+
+            // stores the managers group
+            identityManager.add(salesManagers);
+
+            IdentityQuery<Group> query = identityManager.createIdentityQuery(Group.class);
+
+            // query all childs of sales unit
+            query.setParameter(Group.PARENT, salesUnit);
+
+            List<Group> salesUnitChilds = query.getResultList();
+
+            assertEquals(1, salesUnitChilds.size());
+            </pre>
+          %p
+            And here is an example about how to manage roles for both <code>Realm</code> and <code>Application</code>:
+          :markdown
+            <pre class="brush: java;">
+            // get the realm where global roles are stored
+            Realm acme = this.partitionManager.getPartition(Realm.class, REALM_ACME_NAME);
+
+            assertNotNull(acme);
+
+            // we need an identity manager instance for acme realm. so we can store the role
+            IdentityManager acmeIdentityManager = this.partitionManager.createIdentityManager(acme);
+            Role globalRole = new Role("Global Role");
+
+            // stores the global role.
+            acmeIdentityManager.add(globalRole);
+
+            IdentityQuery<Role> query = acmeIdentityManager.createIdentityQuery(Role.class);
+
+            // let's check if the role is stored by querying using a name
+            query.setParameter(Role.NAME, globalRole.getName());
+
+            List<Role> roles = query.getResultList();
+
+            assertEquals(1, roles.size());
+
+            Role storedGlobalRole = roles.get(0);
+
+            assertEquals(globalRole.getName(), storedGlobalRole.getName());
+
+            Application applicationPartition = this.partitionManager.getPartition(Application.class, APPLICATION_NAME);
+
+            IdentityManager applicationIdentityManager = this.partitionManager.createIdentityManager(applicationPartition);
+            Role applicationRole = new Role("Application Role");
+
+            // stores a application specific role
+            applicationIdentityManager.add(applicationRole);
+
+            query = applicationIdentityManager.createIdentityQuery(Role.class);
+
+            // let's check if the role is stored by querying using a name
+            query.setParameter(Role.NAME, applicationRole.getName());
+
+            roles = query.getResultList();
+
+            assertEquals(1, roles.size());
+
+            Role storedApplicationRole = roles.get(0);
+
+            assertEquals(applicationRole.getName(), storedApplicationRole.getName());
+
+            // let's check if is possible to get the application role from the acme partition
+            query = acmeIdentityManager.createIdentityQuery(Role.class);
+
+            query.setParameter(Role.NAME, applicationRole.getName());
+
+            // partitions don't share identity types
+            assertTrue(query.getResultList().isEmpty());
+            </pre>
+          %h2
+            Creating an Account Type
+          %p
+            In PicketLink, an <code>Account</code> is a special type of <code>IdentityType</code> that is capable of authenticating.
+            Since the authentication process may not depend on one particular type of attribute (not all authentication is performed with a
+            username and password) there are no hard-coded property accessors defined by this interface.
+            It is up to each application to define the <code>Account</code> implementations required according to the application's requirements.
+          %p
+            Create an <code>Account</code> require the same steps as in <code>IdentityType</code>. The main difference is that
+            you must also implement the <code>Account</code> interface.
+          :markdown
+            <pre class="brush: java;">
+            @IdentityStereotype(USER)
+            public class User extends AbstractIdentityType implements Account {
+
+                @StereotypeProperty(IDENTITY_USER_NAME)
+                @AttributeProperty
+                @Unique
+                private String userName;
+
+               // getters and setters
+
+            }
+            </pre>
+          %p
+            Just like <code>Role</code> and <code>Group</code> you should also define a stereotype to your user types. PicketLink provides
+            a number of features based on the concept of "users", using his name to authenticate, authorize and recognize
+            your own user representation.
+          :markdown
+            <pre class="brush: java;">
+            // get the realm where the user should be stored
+            Realm acme = this.partitionManager.getPartition(Realm.class, REALM_ACME_NAME);
+
+            assertNotNull(acme);
+
+            // we need an identity manager instance for acme realm. so we can store the user
+            IdentityManager identityManager = this.partitionManager.createIdentityManager(acme);
+            User user = new User("mary");
+
+            // stores the user in the acme partition
+            identityManager.add(user);
+
+            IdentityQuery<User> query = identityManager.createIdentityQuery(User.class);
+
+            // let's check if the user is stored by querying by name
+            query.setParameter(User.USER_NAME, user.getUserName());
+
+            List<User> users = query.getResultList();
+
+            assertEquals(1, users.size());
+
+            User storedUser = users.get(0);
+
+            assertEquals(user.getUserName(), storedUser.getUserName());
+        %p
+          An <code>Account</code> can use any of the built-in credentials provided by PicketLink such as username/password and One-Time Passwords.
+          Considering our requirements, users should be capable to authenticate using an username/password credential.
+          :markdown
+            <pre class="brush: java;">
+            // get the realm where the user should be stored
+            Realm acme = this.partitionManager.getPartition(Realm.class, REALM_ACME_NAME);
+
+            // we need an identity manager instance for acme realm. so we can store the user
+            IdentityManager identityManager = this.partitionManager.createIdentityManager(acme);
+            User user = new User("mary");
+
+            // stores the user in the acme partition
+            identityManager.add(user);
+
+            Password password = new Password("secret");
+
+            identityManager.updateCredential(user, password);
+
+            UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(user.getUserName(), password);
+
+            identityManager.validateCredentials(credentials);
+
+            assertEquals(VALID, credentials.getStatus());
+        %h2
+          Creating a Relationship
+        %p
+          Considering the requirements, the following types represent a <code>Relationship</code>:
+        %ul
+          %li
+            Grant
+          %li
+            GroupMembership
+          %li
+            ApplicationAccess
+        %p
+          In PicketLink, relationships are represented by the <code>Relationship</code> interface. Like <code>Partition</code> and
+          <code>IdentityType</code>, relationships must implement a specific interface as well.
+        %p
+          The same thing regarding stereotypes. PicketLink also provides a set of common relationships which can be defined to your
+          custom relationships such as grant roles to users and groups or tell an user is member of a group.
+        :markdown
+          <pre class="title: 'Grant Relationship Type. Used to assign roles for both User and Group types.';brush: java;">
+          @RelationshipStereotype(GRANT)
+          public class Grant extends AbstractAttributedType implements Relationship {
+
+            public static final RelationshipQueryParameter ASSIGNEE = RELATIONSHIP_QUERY_ATTRIBUTE.byName("assignee");
+            public static final RelationshipQueryParameter ROLE = RELATIONSHIP_QUERY_ATTRIBUTE.byName("role");
+
+            @InheritsPrivileges("role")
+            @StereotypeProperty(RELATIONSHIP_GRANT_ASSIGNEE)
+            private IdentityType assignee;
+
+
+            @StereotypeProperty(RELATIONSHIP_GRANT_ROLE)
+            private Role role;
+
+            private Grant() {
+              this(null, null);
+            }
+
+            public Grant(IdentityType assignee, Role role) {
+                this.assignee = assignee;
+                this.role = role;
+            }
+
+            // getters and setters
+
+          }
+          </pre>
+          <pre class="title: 'GroupMembership Relationship Type. Used to associate an User as a member of a Group.';brush: java;">
+          @RelationshipStereotype(GROUP_MEMBERSHIP)
+          public class GroupMembership extends AbstractAttributedType implements Relationship {
+
+            public static final RelationshipQueryParameter MEMBER = RELATIONSHIP_QUERY_ATTRIBUTE.byName("member");
+            public static final RelationshipQueryParameter GROUP = RELATIONSHIP_QUERY_ATTRIBUTE.byName("group");
+
+            private Account member;
+            private Group group;
+
+            private GroupMembership() {
+              this(null, null);
+            }
+
+            public GroupMembership(Account member, Group group) {
+              this.member = member;
+              this.group = group;
+            }
+
+            // getters and setters
+
+          }
+          </pre>
+          <pre class="title: 'ApplicationAccess Relationship Type. Used to define that an user is allowed to access an application.';brush: java;">
+          public class ApplicationAccess extends AbstractAttributedType implements Relationship {
+
+            public static final RelationshipQueryParameter ASSIGNEE = RELATIONSHIP_QUERY_ATTRIBUTE.byName("assignee");
+            public static final RelationshipQueryParameter APPLICATION = RELATIONSHIP_QUERY_ATTRIBUTE.byName("application");
+
+            @InheritsPrivileges("application")
+            private IdentityType assignee;
+
+            private Application application;
+
+            @AttributeProperty
+            private Date lastSuccessfulLogin;
+
+            @AttributeProperty
+            private Date lastFailedLogin;
+
+            @AttributeProperty
+            private int failedLoginAttempts;
+
+            private ApplicationAccess() {
+            }
+
+            public ApplicationAccess(IdentityType assignee, Application application) {
+                setAssignee(assignee);
+                setApplication(application);
+            }
+
+            // getters and setters
+
+          }
+          </pre>
+        %p
+          All relationship types are implementing the <code>Relationship</code>. You may also notice the use of
+          <code>AbstractAttributedType</code>. In PicketLink, every single type is a child of <code>AttributedType</code>. Including partitions, identity and account types.
+          This base class is just a handy way to get a default implementation for some methods required by the <code>Relationship</code> interface.
+        %p
+          Some relationships are very common to most use cases and PicketLink also provides some stereotypes to represent them. This is the
+          case for the <code>Grant</code> and <code>GroupMembership</code>. Relationships stereotypes are defined using the <code>@RelationshipStereotype</code>.
+          For the same reason as identity types, relationship stereotypes are important to reuse some built-in features provided by PicketLink.
+          For instance, the security annotations used to check access based on the user roles. The <code>ApplicationAccess</code>
+          type does not have a corresponding stereotype, so we don't need to define one. It is a project-specific relationship required to satisfy our requirements.
+        %p
+          You may also notice the use of <code>@InheritsPrivileges</code> in <code>ApplicationAccess</code>. This is a very important
+          configuration to check access for users considering the group they belong. The <b>assignee</b> of this relationship is a
+          generic <code>IdentityType</code>, which means it can be an <code>User</code> or a <code>Group</code>. When the assignee is a group,
+          all its members are also allowed to access the application.
+        %p
+          Relationships can declare formal attributes to define any specific state. For instance, in <code>ApplicationAccess</code> we
+          are defining some additional properties to store the number of failed login attempts and the date of the last success and unsuccessful login of an user
+          in an application.
+        %p
+          Now let's take a look how to manage those relationship types:
+        :markdown
+          <pre class="title: 'Granting Roles to Users.';brush: java;">
+          PartitionManager partitionManager = getPartitionManager();
+          Realm acmeRealm = getAcmeRealm();
+          IdentityManager acmeIdentityManager = partitionManager.createIdentityManager(acmeRealm);
+          Role globalRole = new Role("Global Role");
+
+          // stores the global role
+          acmeIdentityManager.add(globalRole);
+
+          // we need an identity manager instance for acme realm. so we can store the role
+          Application applicationPartition = getSalesApplicationPartition();
+          IdentityManager applicationIdentityManager = partitionManager.createIdentityManager(applicationPartition);
+          Role applicationRole = new Role("Application Role");
+
+          // stores a application specific role
+          applicationIdentityManager.add(applicationRole);
+
+          User user = new User("mary");
+
+          // stores the user in the acme partition
+          acmeIdentityManager.add(user);
+
+          RelationshipManager relationshipManager = partitionManager.createRelationshipManager();
+
+          // assign global role to user
+          relationshipManager.add(new Grant(user, globalRole));
+
+          // assign application specific role to user
+          relationshipManager.add(new Grant(user, applicationRole));
+
+          RelationshipQuery<Grant> query = relationshipManager.createRelationshipQuery(Grant.class);
+
+          query.setParameter(Grant.ASSIGNEE, user);
+
+          // user is assigned with two roles
+          assertEquals(2, query.getResultCount());
+          </pre>
+        :markdown
+          <pre class="title: 'Adding an User as Member of a Group.';brush: java;">
+          // we need an identity manager instance for acme realm. so we can store the group
+          PartitionManager partitionManager = getPartitionManager();
+          Realm acmeRealm = getAcmeRealm();
+          IdentityManager acmeIdentityManager = partitionManager.createIdentityManager(acmeRealm);
+          Group globalGroup = new Group("Global Group");
+
+          // stores the global group
+          acmeIdentityManager.add(globalGroup);
+
+          // we need an identity manager instance for acme realm. so we can store the group
+          Application applicationPartition = getSalesApplicationPartition();
+          IdentityManager applicationIdentityManager = partitionManager.createIdentityManager(applicationPartition);
+          Group applicationGroup = new Group("Application Group");
+
+          // stores a application specific group
+          applicationIdentityManager.add(applicationGroup);
+
+          User user = new User("mary");
+
+          // stores the user in the acme partition
+          acmeIdentityManager.add(user);
+
+          RelationshipManager relationshipManager = partitionManager.createRelationshipManager();
+
+          // user us now a member of global group
+          relationshipManager.add(new GroupMembership(user, globalGroup));
+
+          // user us now a member of application specific group
+          relationshipManager.add(new GroupMembership(user, applicationGroup));
+
+          RelationshipQuery<GroupMembership> query = relationshipManager.createRelationshipQuery(GroupMembership.class);
+
+          query.setParameter(GroupMembership.MEMBER, user);
+
+          // user is member of two groups
+          assertEquals(2, query.getResultCount());
+          </pre>
+        :markdown
+          <pre class="title: 'Allowing User to Access an Application.';brush: java;">
+          // we need an identity manager instance for acme realm. so we can store the user
+          PartitionManager partitionManager = getPartitionManager();
+          Realm acmeRealm = getAcmeRealm();
+          IdentityManager acmeIdentityManager = partitionManager.createIdentityManager(acmeRealm);
+
+          User user = new User("mary");
+
+          // stores the user in the acme partition
+          acmeIdentityManager.add(user);
+
+          RelationshipManager relationshipManager = partitionManager.createRelationshipManager();
+
+          // grant access to application
+          relationshipManager.add(new ApplicationAccess(user, getSalesApplication()));
+
+          RelationshipQuery<ApplicationAccess> query = relationshipManager.createRelationshipQuery(ApplicationAccess.class);
+
+          query.setParameter(ApplicationAccess.ASSIGNEE, user);
+
+          // user is assigned with two roles
+          assertEquals(1, query.getResultCount());
+          </pre>
+        :markdown
+          <pre class="title: 'Allowing Groups to Access an Application.';brush: java;">
+          // we need an identity manager instance for acme realm. so we can store the group
+          PartitionManager partitionManager = getPartitionManager();
+          Realm acmeRealm = getAcmeRealm();
+          IdentityManager acmeIdentityManager = partitionManager.createIdentityManager(acmeRealm);
+
+          Group group = new Group("Acme Administrators");
+
+          // stores the group in the acme partition
+          acmeIdentityManager.add(group);
+
+          RelationshipManager relationshipManager = partitionManager.createRelationshipManager();
+
+          // grant access to application
+          Application salesApplication = getSalesApplication();
+          relationshipManager.add(new ApplicationAccess(group, salesApplication));
+
+          RelationshipQuery<ApplicationAccess> query = relationshipManager.createRelationshipQuery(ApplicationAccess.class);
+
+          query.setParameter(ApplicationAccess.ASSIGNEE, group);
+
+          // group is allowed to access the application
+          assertEquals(1, query.getResultCount());
+
+          User user = new User("mary");
+
+          acmeIdentityManager.add(user);
+
+          GroupMembership groupMembership = new GroupMembership(user, group);
+
+          relationshipManager.add(groupMembership);
+
+          // the user inherits the group privileges
+          assertTrue(relationshipManager.inheritsPrivileges(user, salesApplication));
+
+          relationshipManager.remove(groupMembership);
+
+          // user no longer is assigned to group, thus is not allowed to access the applicaion
+          assertFalse(relationshipManager.inheritsPrivileges(user, salesApplication));
+          </pre>
+        %p
+          You may notice from the examples the usage of <code>RelationshipManager</code>. This component is obtained
+          from a <code>PartitionManager</code> and provides a set of management operations for relationships. Please take a look at
+          the
+          %a(href="../idm_overview")Identity Management Overview
+          for more details.
+        %p
+          Relationships are also queryable. PicketLink provides a simple Query API for relationships. When defining your relationship types
+          you can also specify query parameters just like we did with identity types. Considering the requirements, we are now
+          able to query all roles, groups and applications for an user. Or even retrieve which users are allowed to access a specific
+          application.
+        %h2 Configuring the Identity Model
+        %p
+          As you might know, PicketLink IDM has a
+          %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html/chap-Identity_Management_-_Configuration.html") Configuration API
+          from where you provide all the necessary configuration to your application. Please, take a look at the documentation if you're not familiar
+          with it.
+        %p
+          When you provide your own custom identity model, you must specify each type in the configuration.
+        :markdown
+          <pre class="title: 'Configuring a File Identity Store with Identity Model Types.';brush: java;">
+          IdentityConfigurationBuilder builder = new IdentityConfigurationBuilder();
+
+          builder
+              .named("default.config")
+                  .stores()
+                      .file()
+                          .supportType(
+                              User.class,
+                              Role.class,
+                              Group.class,
+                              Realm.class,
+                              Application.class)
+                          .supportGlobalRelationship(
+                              Grant.class,
+                              GroupMembership.class,
+                              ApplicationAccess.class)
+                          .supportCredentials(true)
+                          .preserveState(false)
+                          .workingDirectory("/tmp/picketlink-quickstart-identity-model");
+          </pre>
+        %p
+          This is a very simple configuration if you want to start developing and testing your custom model. You don't need anything else,
+          but a filesystem. Once you are done, you can always switch to a different identity store (eg.: JPA) and your code will still be the same.
+        %p
+          In the next section we'll see how to create a JPA Entity Model to map all those types from the custom identity model.
+        %h2 Mapping JPA Entities to Store the Identity Model
+        %p
+          PicketLink IDM allows you to store your identity model in a database. For that, it provides a JPA Identity Store and a set
+          of mapping annotations to be used in your JPA <code>@Entity</code> types.
+        %p
+          When designing your entity model, you must consider how your identity types are defined and what you need to store for each one.
+          The decision to store them in a single table or use multiple tables is up to you. PicketLink does not force you to follow a specific
+          design. You can even have reference to entities from an existing schema.
+        %p
+          Considering the custom identity model, we can use the following entities to map it.
+        %img(src="#{site.base_url}/images/custom_idm_entity_model_640_480.png")
+        %p
+          When mapping an entity to a identity model type, you need a few basic annotations:
+        %ul
+          %li
+            <code>@IdentityManager</code> - Used to specify the type being persisted by an entity.
+          %li
+            <code>@Identifier</code> - Used to mark a property of an entity as an identifier. In PicketLink, all types have a string valued
+            identifier.
+          %li
+            <code>@AttributeValue</code> - Used to mark a property of an entity as related with a specific property of the type being mapped.
+            If a property has different names in the entity and type, you can specify the type's property name.
+        %p
+          PicketLink also provides more annotations, some of them specific to the type being mapped. For instance, <code>IdentityClass</code>,
+          <code>RelationshipClass</code> and <code>Partition</code>. Which you'll see shortly.
+        %h3
+          Mapping Partition Types
+        %p
+          Let's start with creating the mapping for <code>Partition</code> types. According with the diagram, three entities are being
+          used to map partitions: <code>PartitionTypeEntity</code>, <code>ApplicationRealmTypeEntity</code> and <code>RealmTypeEntity</code>.
+        :markdown
+          <pre class="title: 'Base Entity for Partitions';brush: java;">
+          @IdentityManaged(Partition.class)
+          @Entity
+          @Inheritance(strategy = InheritanceType.JOINED)
+          public class PartitionTypeEntity {
+
+              @Identifier
+              @Id
+              private String id;
+
+              @AttributeValue
+              private String name;
+
+              @PartitionClass
+              private String typeName;
+
+              @ConfigurationName
+              private String configurationName;
+
+              // getters and setters
+          }
+          </pre>
+        :markdown
+          <pre class="title: 'ApplicationRealm Partition Mapping';brush: java;">
+          @IdentityManaged(ApplicationRealm.class)
+          @Entity
+          public class ApplicationRealmTypeEntity extends PartitionTypeEntity {
+          }
+          </pre>
+        :markdown
+          <pre class="title: 'Realm Partition Mapping';brush: java;">
+          @IdentityManaged(Realm.class)
+          @Entity
+          public class RealmTypeEntity extends PartitionTypeEntity {
+
+              @AttributeValue
+              private boolean enforceSSL;
+
+              @AttributeValue
+              private int numberFailedLoginAttempts;
+
+              @AttributeValue
+              @Column(columnDefinition = "TEXT")
+              private byte[] publickKey;
+
+              @AttributeValue
+              @Column(columnDefinition = "TEXT")
+              private byte[] privateKey;
+
+              // getters and setters
+          }
+          </pre>
+        %p
+          Regardless the type being mapped, the <code>@IdentityManaged</code> annotation plays an important role. It tells to PicketLink which
+          type is related with a specific JPA entity. In all cases above, we're using it to tell to PicketLink that each entity persists a specific
+          partition type.
+        %p
+          For instance, if you take the <code>RealmTypeEntity</code> you'll see that <code>@IdentityManaged(Realm.class)</code> is
+          indicating that the entity is persisting <code>Realm</code> instances.
+        %p
+          The <code>@AttributeValue</code> annotation provides a simple way to indicate that a specific property of a type must be stored
+          by a property of an entity. In all cases above, you may notice that both type and entity have the same property names. And this
+          is how PicketLink will set values from one to another when storing or retrieving instances from the underlying storage.
+        %p
+          Specifically considering our entity model, both <code>ApplicationRealmTypeEntity</code> and <code>RealmTypeEntity</code> are extending
+          <code>PartitionTypeEntity</code>. You can say: "Why not map both partitions using a single entity?". Well, you can do that.
+          PicketLink does not force your design decisions. But for this guide, this is probably the best way to showcase all features.
+        %p
+          Given that we have two entities representing partitions, we need to be able to create references for both when mapping other types. Remember,
+          some of them may be stored in both <code>Realm</code> or <code>ApplicationRealm</code> partitions such as roles and groups. And that is
+          the main motivation for the existence of the <code>PartitionTypeEntity</code> base entity. You'll understand that better once we start mapping
+          identity types.
+        %p
+          For last, when mapping partitions you'll need some additional annotations.
+        %ul
+          %li
+            <code>PartitionClass</code> - Used to store the full qualified name of a partition type. PicketLink needs this to umarshall entities from
+            the database.
+          %li
+            <code>ConfigurationName</code> - Used to store the configuration name used to store a specific partition. Pretty useful in
+            multi-tenancy designs, where you may want to store instances using different identity stores. For instance, realms in database A
+            and applications in database B. Or a separated database for each application.
+        %h3
+          Mapping Identity and Account Types
+        %p
+          When mapping an <code>IdentityType</code> you'll need some additional annotations.
+        %ul
+          %li
+            <code>@IdentityClass</code> - Used to store the full qualified name of an identity type. PicketLink needs this to umarshall entities from
+            the database.
+          %li
+            <code>@OwnerReference</code> - Used to mark, usually a @ManyToOne or @OneToOne association, as a reference to an owner or
+            parent entity. The owner is usually another entity which maps a specific type. For identity types, it can be a reference to a
+            partition entity or an <code>@OneToOne</code> entity.
+
+        %p
+          Let's take a look now how our entities are mapping the identity types from our identity model.
+        :markdown
+          <pre class="title: 'Base Entity for IdentityType';brush: java;">
+          @MappedSuperclass
+          public abstract class AbstractIdentityTypeEntity {
+
+            @Identifier
+            @Id
+            private String id;
+
+            @IdentityClass
+            private String typeName;
+
+            @Temporal(TemporalType.TIMESTAMP)
+            @AttributeValue
+            private Date createdDate;
+
+            @Temporal(TemporalType.TIMESTAMP)
+            @AttributeValue
+            private Date expirationDate;
+
+            @AttributeValue
+            private boolean enabled;
+
+            // getters and setters
+
+          }
+          </pre>
+        :markdown
+          <pre class="title: 'Application IdentityType Mapping';brush: java;">
+          @IdentityManaged(Application.class)
+          @Entity
+          public class ApplicationTypeEntity extends IdentityTypeEntity {
+
+              @AttributeValue
+              private String name;
+
+              @OwnerReference
+              @ManyToOne(fetch = FetchType.LAZY)
+              private RealmTypeEntity realm;
+
+              // getters and setters
+
+          }
+          </pre>
+        :markdown
+          <pre class="title: 'User Account Type Mapping';brush: java;">
+          @IdentityManaged(User.class)
+          @Entity
+          public class UserTypeEntity extends IdentityTypeEntity {
+
+              @AttributeValue
+              private String userName;
+
+              @OwnerReference
+              @ManyToOne(fetch = FetchType.LAZY)
+              private RealmTypeEntity realm;
+
+              // getters and setters
+
+          }
+          </pre>
+        :markdown
+          <pre class="title: 'Role IdentityType Mapping';brush: java;">
+          @IdentityManaged(Role.class)
+          @Entity
+          public class RoleTypeEntity extends IdentityTypeEntity {
+
+              @AttributeValue
+              private String name;
+
+              @OwnerReference
+              @ManyToOne(fetch = FetchType.LAZY)
+              private PartitionTypeEntity partition;
+
+              // getters and setters
+
+          }
+          </pre>
+        :markdown
+          <pre class="title: 'Group IdentityType Mapping';brush: java;">
+          @IdentityManaged(Group.class)
+          @Entity
+          public class GroupTypeEntity extends IdentityTypeEntity {
+
+              @AttributeValue
+              private String name;
+
+              @AttributeValue
+              @ManyToOne
+              private GroupTypeEntity parent;
+
+              @OwnerReference
+              @ManyToOne (fetch = FetchType.LAZY)
+              private PartitionTypeEntity partition;
+
+            // getters and setters
+
+          }
+          </pre>
+        %p
+          The <code>AbstractIdentityTypeEntity</code> is just a <code>@MappedSuperClass</code> providing some common methods for all
+          identity type entities. As you can see, it defines a few properties, each one is related with the properties defined by
+          the <code>IdentityType</code> interface. You may also notice the use of <code>IdentityClass</code>. You need it in order to
+          tell to PicketLink which type should be used when unmarshalling instances from the database.
+        %p
+          Now you may understand better why we need the <code>PartitionTypeEntity</code>. As you can see, we're using it to create an
+          <code>@OwnerReference</code> for the entities mapping identity types that can be stored in both <code>Realm</code> and
+          <code>ApplicationRealm</code> partitions. This is the case for roles and groups, so their corresponding entities should also
+          reflect this: <code>RoleTypeEntity</code> and <code>GroupTypeEntity</code>
+        %p
+          You may also notice that both <code>ApplicationTypeEntity</code> and <code>UserTypeEntity</code> are restricting the owner
+          reference. In this case, both types can only be associated with <code>Realm</code> partitions, so we just use the <code>RealmTypeEntity</code>
+          directly.
+        %p
+          Both <code>IdentityType</code> and <code>Account</code> types are mapped in the same way. The <code>UserTypeEntity</code>
+          provides a similar mapping as the others entities.
+        %h3
+          Mapping Relationship Types
+        %p
+          When mapping a <code>Relationship</code> you'll need some additional annotations.
+        %ul
+          %li
+            <code>@RelationshipClass</code> - Used to store the full qualified name of a relationship type. PicketLink needs this to umarshall entities from
+            the database.
+          %li
+            <code>@RelationshipDescriptor</code> - This annotation must be used to indicate the field to store the name of the relationship role of a member.
+          %li
+            <code>@RelationshipMember</code> - The reference to a IdentityType mapped entity. This annotation is used to identify the property that holds a reference to the identity type that belongs to this relationship with a specific descriptor.
+            Usually this annotation is used in conjunction with a @ManyToOne property referencing the entity used to store identity types.
+          %li
+            <code>@OwnerReference</code> - Used to mark, usually a @ManyToOne or @OneToOne association, as a reference to an owner or
+            parent entity. The owner is usually another entity which maps a specific type. For relationship types, it should be a reference
+            to an entity mapping the relationship.
+          %p
+            Let's take a look now how our entities are mapping the relationship types from our identity model.
+          :markdown
+            <pre class="title: 'Base Entity for Relationship Types';brush: java;">
+            @IdentityManaged(Relationship.class)
+            @Entity
+            @Inheritance(strategy = InheritanceType.JOINED)
+            public class RelationshipTypeEntity {
+
+                @Identifier
+                @Id
+                private String id;
+
+                @RelationshipClass
+                private String typeName;
+
+              // getters and setters
+
+            }
+            </pre>
+          :markdown
+            <pre class="title: 'Grant Relationship Mapping';brush: java;">
+            @IdentityManaged(Grant.class)
+            @Entity
+            public class GrantTypeEntity extends RelationshipTypeEntity {
+
+            }
+            </pre>
+          :markdown
+            <pre class="title: 'GroupMembership Relationship Mapping';brush: java;">
+            @IdentityManaged(GroupMembership.class)
+            @Entity
+            public class GroupMembershipTypeEntity extends RelationshipTypeEntity {
+
+            }
+            </pre>
+          :markdown
+            <pre class="title: 'ApplicationAccess RelationshipMapping';brush: java;">
+            @IdentityManaged(ApplicationAccess.class)
+            @Entity
+            public class ApplicationAccessTypeEntity extends RelationshipTypeEntity {
+
+              @AttributeValue
+              private Date lastSuccessfulLogin;
+
+              @AttributeValue
+              private Date lastFailedLogin;
+
+              @AttributeValue
+              private int failedLoginAttempts;
+
+              // getters and setters
+
+            }
+            </pre>
+          :markdown
+            <pre class="title: 'Entity to Map each IdentityType in a Relationship';brush: java;">
+            @IdentityManaged({Relationship.class})
+            @Entity
+            public class RelationshipIdentityTypeEntity implements Serializable {
+
+              @Id
+              @GeneratedValue
+              private Long identifier;
+
+              @RelationshipDescriptor
+              private String descriptor;
+
+              @RelationshipMember
+              private String identityType;
+
+              @OwnerReference
+              @ManyToOne
+              private RelationshipTypeEntity owner;
+
+              // getters and setters
+
+            }
+            </pre>
+          %p
+            The relationships are being mapped by the <code>GrantTypeEntity</code>, <code>GroupMembershipTypeEntity</code> and <code>ApplicationAccessypeEntity</code> entities. These
+            entities define the the actual <code>Relationship</code> type that is stored by each one of them as you can see from the <code>@IdentityManaged</code> annotation.
+          %p
+            When mapping relationships you must provide at least two entities. One to store the relationship and another with a reference
+            for each participating <code>IdentityType</code>. For instance, the <code>Grant</code> relationship is an association between an
+            <code>User</code> and <code>Role</code>. The second entity is just about that, store references for each of these identity types.
+            This is exactly for what the <code>RelationshipIdentityTypeEntity</code> is about.
+          %p
+            The <code>@RelationshipDescriptor</code> is always used in a string field, indicating the name of the property in a relationship
+            that is related with a specific identity type. For instance, in <code>Grant</code>, we have the <code>role</code> property
+            to indicate the role being granted. The name "role" will be stored in the descriptor field. Basically, PicketLink needs this
+            information to know where an identity type should be setted when unmarshalling a relationship from the database.
+          %p
+            The <code>RelationshipMember</code> is defined to a property that can be either a simple string <code>@Column</code> field
+            or a <code>ManyToOne</code> field with the reference to the entity mapping identity types. In our case, we need it defined as
+            string because we're supporting a multi-partition relationship. That means, that relationships can reference types from
+            different partitions. If you're working with a single partition, you can define the type of the field as a direct reference
+            to an identity type mapping. If you want an example, here is one from the
+            %a(href="https://github.com/picketlink/picketlink/blob/master/modules/idm/simple-schema/src/main/java/org/picketlink/idm/jpa/model/sample/simple/RelationshipIdentityTypeEntity.java") Basic Model
+            provided by PicketLink. One more reason why we need a custom identity model and not the Basic Model.
+          %p
+            You can even provide multiple <code>RelationshipIdentityTypeEntity</code> to each relationship type if you want to store the participants into separate tables.
+            Just create an entity like this one where the <code>@OwnerReference</code> is a reference to a specific relationship entity, for example <code>GrantTypeEntity</code>.
+            In this case, you must also specify the <code>Grant</code> relationship in the <code>@IdentityManaged</code> annotation.
+          %p
+            The <code>@OwnerReference</code> must also be annotated to entities mapping the participants in a relationship. It is just a
+            reference to the entity mapping the relationship itself. In this case, we're defining a reference to the <code>RelationshipTypeEntity</code>
+            which is the base entity for all relationship entities.
+          %h3
+            Mapping Credentials or CredentialStorage Types
+          %p
+            In PicketLink credentials are stored by a specific <code>CredentialStorage</code>. Please, take a look at the
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html-single/#The_CredentialStorage_interface") documentation
+            for more details.
+          %p
+            PicketLink also provides a built-in credential storage for password-based credentials, the <code>EncodedPasswordStorage</code>. Given that,
+            we need to create a credential stoge every time we need password authentication, we just need to provide an entity that knows how to
+            store the build-in storage.
+          :markdown
+            <pre class="title: 'Entity to Map each IdentityType in a Relationship';brush: java;">
+            public class EncodedPasswordStorage implements CredentialStorage {
+
+              private Date effectiveDate;
+              private Date expiryDate;
+              private String encodedHash;
+              private String salt;
+
+              // getters and setters
+
+            }
+            </pre>
+          %p
+            Just like we did so far, we need now to provide an entity that knows how to store each of these properties. When mapping a
+            <code>CredentialStorage</code> you'll need some additional annotations.
+          %ul
+            %li
+              <code>@ManagedCredential</code> - This annotation is applied to an entity class to indicate that it contains managed credential-related state.
+              Basically, it defines which credential storage class is managed by declaring entity.
+            %li
+              <code>@OwnerReference</code> - The owner of the credential. The field annotated with this annotation must be a reference to another
+              entity wich is mapping an <code>Account</code> type.
+            %li
+              <code>@CredentialClass</code> - Used to store the full qualified name of a credential storage. PicketLink needs this to umarshall entities from
+              the database.
+            %li
+              <code>@CredentialProperty</code> - Specifies that a property should be mapped to a specific field of a <code>CredentialStorage</code>. It behaves
+              just like <code>AttributeValue</code>.
+            %li
+              <code>@EffectiveDate</code> - Used to mark a <code>Date</code> with the <code>CredentialStorage.effectiveDate</code> property.
+            %li
+              <code>@ExpiryDate</code> - Used to mark a <code>Date</code> with the <code>CredentialStorage.expiryDate</code> property.
+          :markdown
+            <pre class="title: 'Entity to Map each IdentityType in a Relationship';brush: java;">
+            @ManagedCredential(EncodedPasswordStorage.class)
+            @Entity
+            public class PasswordCredentialTypeEntity {
+
+              @Id
+              @GeneratedValue
+              private Long id;
+
+              @OwnerReference
+              @ManyToOne
+              private UserTypeEntity owner;
+
+              @CredentialClass
+              private String typeName;
+
+              @Temporal(TemporalType.TIMESTAMP)
+              @EffectiveDate
+              private Date effectiveDate;
+
+              @Temporal(TemporalType.TIMESTAMP)
+              @ExpiryDate
+              private Date expiryDate;
+
+              @CredentialProperty(name = "encodedHash")
+              private String passwordEncodedHash;
+
+              @CredentialProperty(name = "salt")
+              private String passwordSalt;
+
+              // getters and setters
+
+            }
+            </pre>
+          %h2
+            Configuring the JPA Identity Store
+          %p
+            To start using this model we need to configure the JPA Identity Store accordingly as follows:
+          :markdown
+            <pre class="title: 'Entity to Map each IdentityType in a Relationship';brush: java;">
+            builder
+              .named("default.config")
+                  .stores()
+                      .jpa()
+                          // defines each identity type
+                          .supportType(
+                              User.class,
+                              Role.class,
+                              Group.class,
+                              Realm.class,
+                              Application.class,
+                              ApplicationRealm.class)
+                          // defines each relationship type
+                          .supportGlobalRelationship(
+                              Grant.class,
+                              GroupMembership.class,
+                              ApplicationAccess.class)
+                          // we need to support credentials
+                          .supportCredentials(true)
+                          // defines the entities
+                          .mappedEntity(
+                              ApplicationAccessTypeEntity.class,
+                              ApplicationTypeEntity.class,
+                              ApplicationRealmTypeEntity.class,
+                              PartitionTypeEntity.class,
+                              GrantTypeEntity.class,
+                              GroupMembershipTypeEntity.class,
+                              GroupTypeEntity.class,
+                              RealmTypeEntity.class,
+                              RoleTypeEntity.class,
+                              UserTypeEntity.class,
+                              PasswordCredentialTypeEntity.class,
+                              RelationshipTypeEntity.class,
+                              RelationshipIdentityTypeEntity.class);
+            </pre>
+          %p
+            For more information, please check the
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html-single/#chap-Identity_Management_-_Working_with_JPA") documentation.
+          %h3 Summary
+          %p
+            Hopefully this guide helped you to understand some core concepts of PicketLink regarding how to extend it and provide your own identity model.
+          %p
+            We covered some important and basic concepts that will help you to deep dive into some more advanced concepts of PicketLink and create more advanced and complex usecases.
+          %p
+            Most of the things we covered in this guide are also demonstrated by the quickstarts, from where you can get much more usage examples considering different usecases.
+          %p
+            Fell free to contribute with your own guides and help us to improve PicketLink ! Enjoy it !

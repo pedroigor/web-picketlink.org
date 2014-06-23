@@ -5,6 +5,9 @@
     = partial( page.head_partial.nil? ? 'head.html.haml' : page.head_partial , { "real_page" => page } )
     %link{:rel=>"stylesheet", :type=>"text/css", :href=>"#{site.base_url}/stylesheets/blog.css"}
     %link{:rel=>'stylesheet', :type=>'text/css', :href=>"#{site.base_url}/stylesheets/asciidoctor-coderay.css", :media=>"screen" }
+    %link{ :href=>"/stylesheets/sh/shCore.css", :rel=>'stylesheet' }
+    %link{ :href=>"/stylesheets/sh/shThemeDefault.css", :rel=>'stylesheet' }
+    %link{ :href=>"/stylesheets/sh/SyntaxHighlighter.css", :rel=>'stylesheet' }
     :css
       td.download-size {
         text-align: right;
@@ -17,6 +20,14 @@
       .white-stripes tr:nth-child(odd) {
         background-color: none;
       }
+  %script{ :src=>'/javascripts/sh/shCore.js' }
+  %script{ :src=>'/javascripts/sh/shBrushJava.js' }
+  %script{ :src=>'/javascripts/sh/shBrushXml.js' }
+  :javascript
+        SyntaxHighlighter.defaults['gutter'] = false;
+        SyntaxHighlighter.defaults['toolbar'] = false;
+        // register a listener for when the highlighter is done with replacing elements
+        SyntaxHighlighter.all();
   %body
     / begin accesibility skip to top
     %ul#top.visuallyhidden
