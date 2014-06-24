@@ -1,0 +1,194 @@
+= PicketLink 2.6.0.Final is out!
+pedroigor
+2014-06-06
+:revdate: 2014-06-23 00:00:00 +0100
+:awestruct-tags: [announcement, release]
+:awestruct-layout: news
+:source-highlighter: coderay
+
+PicketLink v2.6.0.Final has been released
+
+The PicketLink team is pleased to announce the release of v2.6.0.Final.
+
+This release is a fantastic one for the following reasons:
+
+* Authentication support includes both http://docs.jboss.org/picketlink/2/latest/reference/html/sect-Authentication_API_-_the_code_xmlnshttpdocbook.orgnsdocbookIdentitycode_bean.html#Stateful_or_Stateless_Authentication[stateful and stateless modes]
+* Authorization support provided
+** http://docs.jboss.org/picketlink/2/latest/reference/html/chap-Authorization.html[Security Annotations for authorization]
+** http://docs.jboss.org/picketlink/2/latest/reference/html/chap-Identity_Management_-_Permissions_API_and_Permission_Management.html[Permission API]
+* Use of Apache Deltaspike v1.0.0
+* http://docs.jboss.org/picketlink/2/latest/reference/html/Maven_Dependencies.html[PicketLink Uber Jar (One Single Jar as dependency)]
+* JSON based security tokens using JWT and JWE Specifications
+* Configuration API
+* Improvements of https://docs.jboss.org/author/display/PLINK/SAML+v2.0[SAML Support]
+** For both SP and IDP Initiated SSO
+** SAML Service Providers can choose dynamic accounts
+** WildFly Bindings and Jetty Bindings
+** IDPFilter for all web applications on any servlet container
+** JAXRS Endpoint to issue SAML Assertions
+** http://docs.jboss.org/picketlink/2/latest/reference/html/chap-PicketLink_Subsystem.html[PicketLink Subsystem] for JBoss EAP 6.3 and WildFly Application Server 9
+* https://github.com/jboss-developer/jboss-picketlink-quickstarts/tree/v2.6.0.Final/[PicketLink Quickstarts]
+
+More details about the issues resolved by this version can be found on the https://issues.jboss.org/secure/ReleaseNote.jspa?projectId=12310923&version=12325105[Release Notes].
+
+## Release History
+
+Includes versions PLINK_2.6.0.Final, PLINK_2.6.0.Beta2, PLINK_2.6.0.Beta4, PLINK_2.6.0.CR2, PLINK_2.6.0.Beta3, PLINK_2.6.0.CR1, PLINK_2.6.0.CR3, PLINK_2.6.0.CR4, PLINK_2.6.0.CR5,
+
+** Feature Request
+   * [ PLINK-146 ] XMLSignatureUtil should allow KeyInfo to use X509 if desired
+   * [ PLINK-268 ] Implement Permission Management
+   * [ PLINK-297 ] CertificateLdapExtLoginModule
+   * [ PLINK-303 ] Improve logging and messages
+   * [ PLINK-316 ] Create static pool of PicketLink STS clients to improve performance of login modules
+   * [ PLINK-318 ] PicketLink Undertow Bindings
+   * [ PLINK-323 ] Social Login Quickstarts
+   * [ PLINK-327 ] PasswordCredentialTypeEntity could not be loaded with TomEE
+   * [ PLINK-337 ] Support for privilege inheritence chains
+   * [ PLINK-341 ] SAML Service Provider Workflow abstraction
+   * [ PLINK-342 ] IDPFilter for web applications
+   * [ PLINK-343 ] Jetty Bindings for SAML SSO
+   * [ PLINK-344 ] Service Provider Dynamic Account Chooser Functionality
+   * [ PLINK-353 ] AuthenticationFilter can not be deployed in Glassfish
+   * [ PLINK-359 ] Regular Expression User Name Login Module
+   * [ PLINK-363 ] Combined Service Provider Authenticator
+   * [ PLINK-364 ] SAML2 IDP Initiated SSO
+   * [ PLINK-368 ] Role Generator for JBossAS/JBossWeb Combination
+   * [ PLINK-385 ] Support connection pooling when using the LDAP Identity Store
+   * [ PLINK-386 ] Unsolicited IDP initiated Auth via POST binding
+   * [ PLINK-400 ] Stateless behavior to the Identity bean
+   * [ PLINK-408 ] Allow built in schemes to be overridden in AuthenticationFilter
+   * [ PLINK-415 ] AuthenticationFilter should not call identity.login() unless the request is a login attempt
+   * [ PLINK-416 ] AuthenticationFilter must allow schemes to indicate if a request should be protected or not
+   * [ PLINK-417 ] AuthenticationFilter must support stateless authentication
+   * [ PLINK-425 ] PicketLink does not include NameID and Destination for the  LogoutRequest
+   * [ PLINK-431 ] Create PicketLink Uber Jar
+   * [ PLINK-435 ] Support Token-based Credential OOTB
+   * [ PLINK-442 ] Account Chooser Valve should show account chooser page when user wants to change IDP
+   * [ PLINK-475 ] Introduce configuration API to the base module
+   * [ PLINK-488 ] JAX-RS Endpoint Service to issue SAML Assertions
+   * [ PLINK-492 ] SAMLClient API
+   * [ PLINK-494 ] Rename @RequiresAccount to @LoggedIn
+   * [ PLINK-495 ] Authentication Schemes should avoid dialog box when performing Ajax Requests
+
+** Bug
+   * [ PLINK-199 ] Error granting role with EclipseLink
+   * [ PLINK-210 ] Regression: use of In.value() for collections
+   * [ PLINK-281 ] Quickstarts: Remove references to AS 7.1 in the PicketLink quickstarts
+   * [ PLINK-332 ] PicketLink fails to bootstrap due to TransactionRequiredException on TomEE and GlassFish
+   * [ PLINK-360 ] SAML Assertion parsing - empty AttributeValue raises exception
+   * [ PLINK-356 ] Reloading configuration in IDP doesn't work
+   * [ PLINK-361 ] Wrong validation when configuring credentials using multiple stores for a single identity configuration
+   * [ PLINK-365 ] Error on verify ACL Permission
+   * [ PLINK-367 ] Custom partition types are not properly configured when specifying the custom type instead of the base Partition type
+   * [ PLINK-372 ] boolean config values should default to boolean.FALSE if not explicitly declared in configs
+   * [ PLINK-378 ] SAML2LogoutHandler should create logout request with nameid format
+   * [ PLINK-379 ] HTTP Redirect Binding is not restoring original request when accessing a SP for the first time
+   * [ PLINK-380 ] IDPFilter is not populating roles in assertion when using SAML v1.1
+   * [ PLINK-381 ] IDPFilter is stopping the filter chain and not providing application resources
+   * [ PLINK-382 ] WildFly Binding is not supporting SAML v1.1 usecases
+   * [ PLINK-383 ] WildFly SP Binding is is raising IllegalStateException messages.
+   * [ PLINK-384 ] Users can authenticate with invalid credentials into LDAP in concurrent environment
+   * [ PLINK-387 ] Create producer method for PersistentPermissionVoter
+   * [ PLINK-395 ] Add classes under org.picketlink.identity.federation.core.config
+   * [ PLINK-396 ] IDPWebBrowserSSOValve and IDPFilter are decoding the relaystate
+   * [ PLINK-402 ] AbstractAccountChooserValve needs to deal with Session properly during logout
+   * [ PLINK-403 ] IDM not able to handle Ldap server restarts
+   * [ PLINK-404 ] AbstractAccountChooserValve needs to handle case when user did not succeed at IDP
+   * [ PLINK-405 ] Make the principal that gets sent to the AttributeManager configurable
+   * [ PLINK-406 ] Picketlink doesn't work with RH Directory server 9.1
+   * [ PLINK-407 ] characterEncoding parameter not used in for requests in IDPWebBrowserSSOValve
+   * [ PLINK-409 ] IPv6 configuration of WildFly or EAP needs to search for key alias without enclosing []
+   * [ PLINK-410 ] Metadata of Single EntityDescriptor should allow for EntityDescriptor root element
+   * [ PLINK-414 ] PicketLink failed AuthnRequest issues invalid top level Saml2 statusCode value in response
+   * [ PLINK-422 ] SAML2 Unsolicited Response is always redirecting back to SP ACS URL
+   * [ PLINK-426 ] PicketLink unable to parse jboss environment variables such as "jboss.server.config.dir" that may have backslashes in the values
+   * [ PLINK-428 ] PicketLink does not include Destination for an AuthnFailed Response
+   * [ PLINK-434 ] Credential status is not being updated when using username/password credentials
+   * [ PLINK-436 ] Identity.hasPermission(class, identifier) does not work with a JPA store
+   * [ PLINK-443 ] JPAIdentityStore looks for Id.class instead of Identity.class
+   * [ PLINK-444 ] PL should not automatically add basic model types
+   * [ PLINK-446 ] Account Chooser Valve does not need saveRequest and restoreRequest methods
+   * [ PLINK-448 ] Identity bean not available in EL
+   * [ PLINK-449 ] XMLConfigurationProvider should make IDM_Classloaders array private
+   * [ PLINK-451 ] JPABasedTokenRegistry->executeInTransaction should defend against null manager
+   * [ PLINK-452 ] LDAPIdentityStore->removeRelationship needs to check for null mappedAttribute
+   * [ PLINK-453 ] RelationshipJdbcType->load needs to handle paramValues being null
+   * [ PLINK-454 ] IdentityStoreConfigurationBuilder->unsupportType should address null operations
+   * [ PLINK-455 ] XMLEncryptionUtil->decryptElementInDocument() should consider null decryptedDoc
+   * [ PLINK-456 ] DefaultPartitionManager->getStoreForCredentialOperation handle null identityStore
+   * [ PLINK-457 ] IDPMetadataConfigurationProvider->getIDPConfiguration() should handle null entities
+   * [ PLINK-460 ] FileBasedMetadataConfigurationStore should close FileInputStream/FileWriter in finally
+   * [ PLINK-461 ] FacebookProcessor -> readUrlContent should close stream
+   * [ PLINK-462 ] ExternalAuthentication -> readUrlContent should close stream
+   * [ PLINK-463 ] XMLEncryptionUtil should use StringUtil for null string checks
+   * [ PLINK-464 ] WSSecurityWriter/WSTrustResponseWriter should use StringUtil for null string checks
+   * [ PLINK-465 ] LDAPUtil->formatDate should not call format on static DateFormat
+   * [ PLINK-466 ] CoreConfigUtil->decryptPasswords should not new String of String
+   * [ PLINK-467 ] KeyStoreUtil->addCertificate should close fileoutputstream in finally
+   * [ PLINK-468 ] IDPFilter->initIDPConfiguration may not be closing InputStream
+   * [ PLINK-469 ] public static non final variables should be made final
+   * [ PLINK-470 ] BaseFormAuthenticator->setConfigProvider references null parameter
+   * [ PLINK-471 ] OpenIDTokenProvider->check() method has static serverManager in unsynchronized mode
+   * [ PLINK-472 ] AbstractIDPValve->initIDPConfiguration may not be closing InputStream
+   * [ PLINK-473 ] BaseFormAuthenticator->processConfiguration may not be closing InputStream
+   * [ PLINK-474 ] SPFormAuthenticationMechanism->processConfiguration may not be closing InputStream
+   * [ PLINK-480 ] Identity bean should be passivation-capable
+   * [ PLINK-483 ] PostBindingUtil - sendPost errantly appending new line character causing outputstream closed exception on Jetty
+   * [ PLINK-485 ] User created with IDM in ActiveDirectory doesn't have correct ID returned
+   * [ PLINK-486 ] [WildFly] PicketLink SAML is logging "Stream closed" messages when using POST
+   * [ PLINK-487 ] IDPFilter: getUserPrincipal calls request.getUserPrincipal 2 times
+   * [ PLINK-493 ] Review WildFly Support
+   * [ PLINK-499 ] SAML20/SAML11 AssertionTokenProviders->validate method is not checking assertion expiry properly
+
+** Task
+   * [ PLINK-201 ] Review CI environment
+   * [ PLINK-284 ] PicketLink IDP and SPNego
+   * [ PLINK-319 ] WildFly PicketLink Extension and IDM Subsystem
+   * [ PLINK-321 ] Create assembly config to package a non-CDI jar of IDM
+   * [ PLINK-350 ] Validate XMLSignatureUtil->KeyInfo/X509Certificate Usage
+   * [ PLINK-355 ] Merge federation quickstarts into jboss-developer/jboss-picketlink-quickstarts
+   * [ PLINK-366 ] Checkstyle for PicketLink Bindings Project
+   * [ PLINK-370 ] Lower log level from INFO to TRACE for Canonicalization
+   * [ PLINK-371 ] Investigate why the @Id field of RelationshipIdentityTypeEntity changed
+   * [ PLINK-373 ] Ensure Boolean variables are initialized and handle null autoboxing issues
+   * [ PLINK-374 ] Enable WildFly distribution in PicketLink Bindings
+   * [ PLINK-376 ] Port JSON Security from PicketBox Core
+   * [ PLINK-377 ] Bring social dependency in PL BOM
+   * [ PLINK-389 ] Document the Authentication Events
+   * [ PLINK-392 ] Quickstart for Mobile Use Case (JAX-RS,BASIC,PL IDM,LDAP)
+   * [ PLINK-394 ] Quickstart for displaying Terms of Service page after authentication
+   * [ PLINK-411 ] Extract JWT code to its own module from oAuth
+   * [ PLINK-420 ] Quickstart using HTML5 + Bootstrap + AngularJS + REST
+   * [ PLINK-423 ] Remove distribution from build
+   * [ PLINK-427 ] Quickstart for displaying Terms of Service page after authentication at the IDP
+   * [ PLINK-439 ] Create picketlink-deltaspike module
+   * [ PLINK-476 ] Move PicketLink API events to org.picketlink.event package
+   * [ PLINK-477 ] Move PicketLink BaseLog to org.picketlink.log package
+   * [ PLINK-478 ] Move PicketLink extensions to a specific package
+   * [ PLINK-479 ] Remove cache api as it is not in use
+   * [ PLINK-481 ] Update Apache Deltaspike to v0.7
+   * [ PLINK-504 ] Custom Identity Model Quickstart
+   * [ PLINK-505 ] Custom Identity Model Guide
+
+** Support Patch
+   * [ PLINK-304 ] picketlink + eclipselink issue
+
+** Component  Upgrade
+   * [ PLINK-498 ] Upgrade Apache DeltaSpike to 1.0.0
+
+** Enhancement
+   * [ PLINK-313 ] IDP should be configurable to sign assertions
+   * [ PLINK-322 ] BasicModel.hasRole should consider roles assigned to the group which the user belongs to
+   * [ PLINK-352 ] Proper exception message when using a wrong attribute mapping for referenced IdentityType
+   * [ PLINK-362 ] File based IDM in clustered environment in the same machine
+   * [ PLINK-369 ] Support a ClassLoader when instantiating handlers
+   * [ PLINK-375 ] Support SAMLConfigProvider and AuditHelper from WildFly IdP and SP bindings
+   * [ PLINK-418 ] AuthenticationFilter is returning HTTP Status Code 500 when any AuthenticationException is thrown
+   * [ PLINK-437 ] Source and Javadoc generation for snapshot builds
+   * [ PLINK-441 ] Identity Model classes no-arg constructors must be public
+   * [ PLINK-484 ] Jetty Binding Maven POM - move Jetty dependencies to provided scope
+   * [ PLINK-489 ] Support User Stereotypes in Credential API
+   * [ PLINK-497 ] Configure Signature Algorithm for IdP and SP
+   * [ PLINK-502 ] Improve validation of JPA mappings
+   * [ PLINK-503 ] Support formal attributes in Relationship types
