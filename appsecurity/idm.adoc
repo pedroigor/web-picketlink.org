@@ -1,0 +1,14 @@
+= Identity Model (IDM)
+:awestruct-layout: project
+:page-interpolate: true
+:showtitle:
+
+PicketLink includes Identity Model (IDM) API and Implementation
+
+Please refer to the documentation as well as quickstarts.
+
+== Documentation
+http://docs.jboss.org/picketlink/2/latest/reference/html-single/#chap-Identity_Management_-_Overview
+
+== Quickstarts
+https://github.com/jboss-developer/jboss-picketlink-quickstarts/
