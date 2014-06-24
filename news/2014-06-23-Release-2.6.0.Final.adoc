@@ -1,6 +1,6 @@
 = PicketLink 2.6.0.Final is out!
-pedroigor
-2014-06-06
+asaldhan
+2014-06-23
 :revdate: 2014-06-23 00:00:00 +0100
 :awestruct-tags: [announcement, release]
 :awestruct-layout: news
