@@ -33,9 +33,9 @@ More details about the issues resolved by this version can be found on the https
 
 ## Release History
 
-Includes versions PLINK_2.6.0.Final, PLINK_2.6.0.Beta2, PLINK_2.6.0.Beta4, PLINK_2.6.0.CR2, PLINK_2.6.0.Beta3, PLINK_2.6.0.CR1, PLINK_2.6.0.CR3, PLINK_2.6.0.CR4, PLINK_2.6.0.CR5,
+Includes versions PLINK_2.6.0.Final, PLINK_2.6.0.CR5, PLINK_2.6.0.CR4, PLINK_2.6.0.CR3, PLINK_2.6.0.CR2, PLINK_2.6.0.CR1, PLINK_2.6.0.Beta4, PLINK_2.6.0.Beta3 and PLINK_2.6.0.Beta2.
 
-** Feature Request
+** **Feature Request**
    * [ PLINK-146 ] XMLSignatureUtil should allow KeyInfo to use X509 if desired
    * [ PLINK-268 ] Implement Permission Management
    * [ PLINK-297 ] CertificateLdapExtLoginModule
@@ -71,7 +71,7 @@ Includes versions PLINK_2.6.0.Final, PLINK_2.6.0.Beta2, PLINK_2.6.0.Beta4, PLINK
    * [ PLINK-494 ] Rename @RequiresAccount to @LoggedIn
    * [ PLINK-495 ] Authentication Schemes should avoid dialog box when performing Ajax Requests
 
-** Bug
+** **Bug**
    * [ PLINK-199 ] Error granting role with EclipseLink
    * [ PLINK-210 ] Regression: use of In.value() for collections
    * [ PLINK-281 ] Quickstarts: Remove references to AS 7.1 in the PicketLink quickstarts
@@ -141,7 +141,7 @@ Includes versions PLINK_2.6.0.Final, PLINK_2.6.0.Beta2, PLINK_2.6.0.Beta4, PLINK
    * [ PLINK-493 ] Review WildFly Support
    * [ PLINK-499 ] SAML20/SAML11 AssertionTokenProviders->validate method is not checking assertion expiry properly
 
-** Task
+** **Task**
    * [ PLINK-201 ] Review CI environment
    * [ PLINK-284 ] PicketLink IDP and SPNego
    * [ PLINK-319 ] WildFly PicketLink Extension and IDM Subsystem
@@ -171,13 +171,13 @@ Includes versions PLINK_2.6.0.Final, PLINK_2.6.0.Beta2, PLINK_2.6.0.Beta4, PLINK
    * [ PLINK-504 ] Custom Identity Model Quickstart
    * [ PLINK-505 ] Custom Identity Model Guide
 
-** Support Patch
+** **Support Patch**
    * [ PLINK-304 ] picketlink + eclipselink issue
 
-** Component  Upgrade
+** **Component  Upgrade**
    * [ PLINK-498 ] Upgrade Apache DeltaSpike to 1.0.0
 
-** Enhancement
+** **Enhancement**
    * [ PLINK-313 ] IDP should be configurable to sign assertions
    * [ PLINK-322 ] BasicModel.hasRole should consider roles assigned to the group which the user belongs to
    * [ PLINK-352 ] Proper exception message when using a wrong attribute mapping for referenced IdentityType
