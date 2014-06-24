@@ -108,25 +108,11 @@ title: Getting Started
           %h3 Referencing PicketLink Modules when Using EAP 6 or WildFly
           %p
             If you're using JBoss EAP 6 or WildFly you don't need to ship the PicketLink libraries inside your deployment. Instead of that,
-            you can use the <b>META-INF/jboss-deployment-structure.xml</b> file to configure all PicketLink dependencies:
-            %pre
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jboss-deployment-structure&gt;
-              &nbsp;&nbsp;&nbsp;&nbsp;&lt;deployment&gt;
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;dependencies&gt;
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;module name="org.picketlink.core"/&gt;
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;dependencies&gt;
-              &nbsp;&nbsp;&nbsp;&nbsp;&lt;/deployment&gt;
-              &lt;/jboss-deployment-structure&gt;
+            you can use the <b>META-INF/jboss-deployment-structure.xml</b> file to configure all PicketLink dependencies.
           %p
-            For those already using PicketLink Federation (Eg.: SAML-based Single Sign-On), the configuration is the same:
-            %pre
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jboss-deployment-structure&gt;
-              &nbsp;&nbsp;&nbsp;&nbsp;&lt;deployment&gt;
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;dependencies&gt;
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;module name="org.picketlink"/&gt;
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;dependencies&gt;
-              &nbsp;&nbsp;&nbsp;&nbsp;&lt;/deployment&gt;
-              &lt;/jboss-deployment-structure&gt;
+            Please take a look at
+            %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html/Configuring_the_PicketLink_Dependencies_for_your_Deployment.html") Configuring the PicketLink Dependencies for your Deployment
+            for more details.
           .well
             NOTE: Please, consider updating your EAP 6 or WildFly server with the latest PicketLink version using the installer.
       .row-fluid
