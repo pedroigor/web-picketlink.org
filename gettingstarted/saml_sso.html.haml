@@ -94,100 +94,117 @@ title: Single Sign-On Using Security Assertion Markup Language (SAML)
             you'll notice that this application defines some security constraints and also a login configuration.
           %p
             The security constraints are restricting access to all application's resources and defining which roles are allowed to access them.
-          %pre
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;security-constraint&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;web-resource-collection&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;web-resource-name&gt;Manager command&lt;/web-resource-name&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;url-pattern&gt;/*&lt;/url-pattern&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;/web-resource-collection&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;auth-constraint&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;role-name&gt;manager&lt;/role-name&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;role-name&gt;Sales&lt;/role-name&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;role-name&gt;Employee&lt;/role-name&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;/auth-constraint&gt;
+          :markdown
+            <pre class="brush: xml;">
+            &lt;security-constraint&gt;
+              &lt;web-resource-collection&gt;
+                &lt;web-resource-name&gt;Manager command&lt;/web-resource-name&gt;
+                &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+              &lt;/web-resource-collection&gt;
+              &lt;auth-constraint&gt;
+                &lt;role-name&gt;manager&lt;/role-name&gt;
+                &lt;role-name&gt;Sales&lt;/role-name&gt;
+                &lt;role-name&gt;Employee&lt;/role-name&gt;
+              &lt;/auth-constraint&gt;
             &lt;/security-constraint&gt;
+            </pre>
           %p
             Regarding the login configuration, the application defines <b>FORM</b> as the default authentication method.
-          %pre
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;login-config&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;auth-method&gt;FORM&lt;/auth-method&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;realm-name&gt;PicketLink IDP Application&lt;/realm-name&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;form-login-config&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;form-login-page&gt;/jsp/login.jsp&lt;/form-login-page&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;form-error-page&gt;/jsp/login-error.jsp&lt;/form-error-page&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;/form-login-config&gt;
+          :markdown
+            <pre class="brush: xml;">
+            &lt;login-config&gt;
+              &lt;auth-method&gt;FORM&lt;/auth-method&gt;
+              &lt;realm-name&gt;PicketLink IDP Application&lt;/realm-name&gt;
+              &lt;form-login-config&gt;
+                &lt;form-login-page&gt;/jsp/login.jsp&lt;/form-login-page&gt;
+                &lt;form-error-page&gt;/jsp/login-error.jsp&lt;/form-error-page&gt;
+              &lt;/form-login-config&gt;
             &lt;/login-config&gt;
+            </pre>
           %p
             If you're familiar with JEE Security, you'll find all the configuration above pretty simple. We're just restricting access to the application resources based on some roles and enabling FORM-based authentication. In practice, all the configuration
             above will make the application redirect the user to a login page if he is not authenticated.
           %p
             In order to properly authenticate users using LDAP, a Database or whatever, we need to configure a security domain. When using JBoss EAP or Wildfly you just need to add a <b>security-domain</b> configuration
             to your <b>${JBOSS_HOME}/standalone/configuration/standalone.xml</b> as follows:
-          %pre
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;security-domain name="idp" cache-type="default"&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;authentication&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;login-module code="UsersRoles" flag="required"&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;module-option name="usersProperties" value="users.properties"/&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;module-option name="rolesProperties" value="roles.properties"/&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/login-module&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;/authentication&gt;
+          :markdown
+            <pre class="brush: xml;">
+            &lt;security-domain name="idp" cache-type="default"&gt;
+              &lt;authentication&gt;
+                &lt;login-module code="UsersRoles" flag="required"&gt;
+                  &lt;module-option name="usersProperties" value="users.properties"/&gt;
+                  &lt;module-option name="rolesProperties" value="roles.properties"/&gt;
+                &lt;/login-module&gt;
+              &lt;/authentication&gt;
             &lt;/security-domain&gt;
+            </pre>
           %p
             The security domain above is using properties files to authenticate users and load their roles. Both users.properties and roles.properties files are inside the example application at <b>WEB-INF/classes</b>.
             Usually, you would prefer to authenticate your users against LDAP or Database servers. Both JBoss EAP 6 and WildFly provide different JAAS LoginModules which you can choose accordingly with your needs. You can even
             write your own implementation.
           %p
             To make your application use the security domain you need to add a <b>WEB-INF/jboss-web.xml</b> file to your deployment.
-          %pre
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jboss-web&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;security-domain&gt;idp&lt;/security-domain&gt;
+          :markdown
+            <pre class="brush: xml;">
+            &lt;jboss-web&gt;
+              &lt;security-domain&gt;idp&lt;/security-domain&gt;
             &lt;/jboss-web&gt;
+            </pre>
           %p
             What we did so far was just enable authentication to the application. But how does the application knows how to process SAML messages ? Or how the application is configured as PicketLink Identity Provider ?
           %p
             To answer those questions you need to understand the role of the PicketLink Authenticators. The authenticator is a special component provided by PicketLink that knows how to process SAML messages. Its configuration
             depends on the web container you're using. When using JBoss EAP 6 for example, you configure the authenticator by specifying a <b>valve</b> configuration to the <b>WEB-INF/jboss-web.xml</b> file.
-          %pre
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jboss-web&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;security-domain&gt;idp&lt;/security-domain&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;valve&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;class-name&gt;org.picketlink.identity.federation.bindings.tomcat.idp.IDPWebBrowserSSOValve&lt;/class-name&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;/valve&gt;
+          :markdown
+            <pre class="brush: xml;">
+            &lt;jboss-web&gt;
+              &lt;security-domain&gt;idp&lt;/security-domain&gt;
+
+              &lt;valve&gt;
+                &lt;class-name&gt;org.picketlink.identity.federation.bindings.tomcat.idp.IDPWebBrowserSSOValve&lt;/class-name&gt;
+              &lt;/valve&gt;
             &lt;/jboss-web&gt;
+            </pre>
           %p
             When using Undertow, the configuration is a little different. You enable the authenticator by configuring a Servlet Filter in <b>WEB-INF/web.xml</b>.
-          %pre
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;filter&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;filter-name&gt;IDPFilter&lt;/filter-name&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;filter-class&gt;org.picketlink.identity.federation.web.filters.IDPFilter&lt;/filter-class&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;/filter&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;filter-mapping&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;filter-name&gt;IDPFilter&lt;/filter-name&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;url-pattern&gt;/*&lt;/url-pattern&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;/filter-mapping&gt;
+          :markdown
+            <pre class="brush: xml;">
+            &lt;filter&gt;
+              &lt;filter-name&gt;IDPFilter&lt;/filter-name&gt;
+              &lt;filter-class&gt;org.picketlink.identity.federation.web.filters.IDPFilter&lt;/filter-class&gt;
             &lt;/filter&gt;
+
+            &lt;filter-mapping&gt;
+              &lt;filter-name&gt;IDPFilter&lt;/filter-name&gt;
+              &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+            &lt;/filter-mapping&gt;
+            </pre>
           .well
             You may be asking why not use the IDPFilter in both cases. And you can ! <b>But we strongly recommend JBoss EAP 6 users to use the valve</b>. The IDPFilter was recently released and is intended for community users only.
             There is also an issue in JBoss EAP 6.2 that impacts the usage of IDPFilter. Later versions of EAP 6 should have this fixed.
           %p
             For last, you need to provide the configuration for the IdP. This is done by adding a <b>WEB-INF/picketlink.xml</b> file to your deployment.
-          %pre
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;PicketLink xmlns="urn:picketlink:identity-federation:config:2.1"&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;PicketLinkIDP xmlns="urn:picketlink:identity-federation:config:2.1"&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;IdentityURL&gt;${idp.url::http://localhost:8080/idp/}&lt;/IdentityURL&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Trust&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Domains&gt;localhost,jboss.com,jboss.org,amazonaws.com&lt;/Domains&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/Trust&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;/PicketLinkIDP&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;Handlers xmlns="urn:picketlink:identity-federation:handler:config:2.1"&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2IssuerTrustHandler" /&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2LogOutHandler" /&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2AuthenticationHandler" /&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Handler class="org.picketlink.identity.federation.web.handlers.saml2.RolesGenerationHandler" /&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2SignatureGenerationHandler" /&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2SignatureValidationHandler" /&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;/Handlers&gt;
+          :markdown
+            <pre class="brush: xml;">
+            &lt;PicketLink xmlns="urn:picketlink:identity-federation:config:2.1"&gt;
+              &lt;PicketLinkIDP xmlns="urn:picketlink:identity-federation:config:2.1"&gt;
+                &lt;IdentityURL&gt;${idp.url::http://localhost:8080/idp/}&lt;/IdentityURL&gt;
+
+                &lt;Trust&gt;
+                  &lt;Domains&gt;localhost,jboss.com,jboss.org,amazonaws.com&lt;/Domains&gt;
+                &lt;/Trust&gt;
+              &lt;/PicketLinkIDP&gt;
+
+              &lt;Handlers xmlns="urn:picketlink:identity-federation:handler:config:2.1"&gt;
+                &lt;Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2IssuerTrustHandler" /&gt;
+                &lt;Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2LogOutHandler" /&gt;
+                &lt;Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2AuthenticationHandler" /&gt;
+                &lt;Handler class="org.picketlink.identity.federation.web.handlers.saml2.RolesGenerationHandler" /&gt;
+                &lt;Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2SignatureGenerationHandler" /&gt;
+                &lt;Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2SignatureValidationHandler" /&gt;
+              &lt;/Handlers&gt;
             &lt;/PicketLink&gt;
+            </pre>
         %p
           This file is responsible to provide all the configuration for a given Identity Provider. PicketLink provides a lot of configuration options such as signature support, encryption, CLIENT_CERT/SSL authentication. For more information, please read
           this
@@ -204,61 +221,75 @@ title: Single Sign-On Using Security Assertion Markup Language (SAML)
                 %a(href="https://github.com/jboss-developer/jboss-picketlink-quickstarts/tree/master/picketlink-federation-saml-sp-post-basic")PicketLink Service Provider
           %p
             The configuration of a SP is pretty much the same as those used to enable an application as an IdP. You still need to define a security-constraint.
-          %pre
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;security-constraint&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;web-resource-collection&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;web-resource-name&gt;Manager command&lt;/web-resource-name&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;url-pattern&gt;/*&lt;/url-pattern&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;/web-resource-collection&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;auth-constraint&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;role-name&gt;Manager&lt;/role-name&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;/auth-constraint&gt;
+          :markdown
+            <pre class="brush: xml;">
+            &lt;security-constraint&gt;
+              &lt;web-resource-collection&gt;
+                &lt;web-resource-name&gt;Manager command&lt;/web-resource-name&gt;
+                &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+              &lt;/web-resource-collection&gt;
+
+              &lt;auth-constraint&gt;
+                &lt;role-name&gt;Manager&lt;/role-name&gt;
+              &lt;/auth-constraint&gt;
             &lt;/security-constraint&gt;
+            </pre>
         %p
           The security constraint above is protecting all resources with role <b>Manager</b>. The role will be retrieved by the Service Provider by looking the statements defined in the SAML Assertion.
         %p
           As mentioned before, the Service Provider receives a SAML Assertion from the IdP. We need somehow get all user information from the assertion to authenticate the user locally. PicketLink provides a specific
           JAAS LoginModule that knows how to process SAML Assertions and authenticate users based on that information.
-        %pre
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;security-domain name="sp" cache-type="default"&gt;
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;authentication&gt;
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;login-module code="org.picketlink.identity.federation.bindings.jboss.auth.SAML2LoginModule" flag="required"/&gt;
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/authentication&gt;
-          &nbsp;&nbsp;&lt;/security-domain&gt;
+        :markdown
+          <pre class="brush: xml;">
+          &lt;security-domain name="sp" cache-type="default"&gt;
+            &lt;authentication&gt;
+              &lt;login-module code="org.picketlink.identity.federation.bindings.jboss.auth.SAML2LoginModule" flag="required"/&gt;
+            &lt;/authentication&gt;
+          &lt;/security-domain&gt;
+          </pre>
         %p
           When using JBoss EAP or Wildfly you just need to add a <b>security-domain</b> like above to your <b>${JBOSS_HOME}/standalone/configuration/standalone.xml</b>. And of course, reference it from your application
           using the <b>WEB-INF/jboss-web.xml</b> file:
-        %pre
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jboss-web&gt;
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;security-domain&gt;sp&lt;/security-domain&gt;
-          &nbsp;&nbsp;&lt;/jboss-web&gt;
+        :markdown
+          <pre class="brush: xml;">
+          &lt;jboss-web&gt;
+            &lt;security-domain&gt;sp&lt;/security-domain&gt;
+          &lt;/jboss-web&gt;
+          </pre>
         %p
           Service Providers also require the configuration for a specific PicketLink Authenticator in order to enable SAML processing. When using JBoss EAP 6 for example, you configure the authenticator by specifying a <b>valve</b> configuration to the <b>WEB-INF/jboss-web.xml</b> file.
-        %pre
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jboss-web&gt;
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;security-domain&gt;sp&lt;/security-domain&gt;
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;valve&gt;
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;class-name&gt;org.picketlink.identity.federation.bindings.tomcat.sp.ServiceProviderAuthenticator&lt;/class-name&gt;
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/valve&gt;
-          &nbsp;&nbsp;&lt;/jboss-web&gt;
+        :markdown
+          <pre class="brush: xml;">
+          &lt;jboss-web&gt;
+            &lt;security-domain&gt;sp&lt;/security-domain&gt;
+
+            &lt;valve&gt;
+              &lt;class-name&gt;org.picketlink.identity.federation.bindings.tomcat.sp.ServiceProviderAuthenticator&lt;/class-name&gt;
+            &lt;/valve&gt;
+          &lt;/jboss-web&gt;
+          </pre>
         %p
           When using Undertow, the configuration is a little different. You enable the authenticator by configuring an Undertow Servlet Extension to your deployment by adding a file <b>/WEB-INF/classes/META-INF/services/io.undertow.servlet.ServletExtension</b> to your deployment.
         %pre
           org.picketlink.identity.federation.bindings.wildfly.sp.SPServletExtension
         %p
           For last, you need to provide the configuration for the SP. This is done by adding a <b>WEB-INF/picketlink.xml</b> file to your deployment.
-        %pre
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;PicketLink xmlns="urn:picketlink:identity-federation:config:2.1"&gt;
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;PicketLinkSP xmlns="urn:picketlink:identity-federation:config:2.1" BindingType="POST"&gt;
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;IdentityURL&gt;${idp.url::http://localhost:8080/idp/}&lt;/IdentityURL&gt;
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;ServiceURL&gt;${sales-post.url::http://localhost:8080/sales-post/}&lt;/ServiceURL&gt;
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/PicketLinkSP&gt;
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Handlers xmlns="urn:picketlink:identity-federation:handler:config:2.1"&gt;
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2LogOutHandler" /&gt;
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2AuthenticationHandler" /&gt;
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Handler class="org.picketlink.identity.federation.web.handlers.saml2.RolesGenerationHandler" /&gt;
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/Handlers&gt;
+        :markdown
+          <pre class="brush: xml;">
+          &lt;PicketLink xmlns="urn:picketlink:identity-federation:config:2.1"&gt;
+            &lt;PicketLinkSP xmlns="urn:picketlink:identity-federation:config:2.1" BindingType="POST"&gt;
+              &lt;IdentityURL&gt;${idp.url::http://localhost:8080/idp/}&lt;/IdentityURL&gt;
+
+              &lt;ServiceURL&gt;${sales-post.url::http://localhost:8080/sales-post/}&lt;/ServiceURL&gt;
+            &lt;/PicketLinkSP&gt;
+
+            &lt;Handlers xmlns="urn:picketlink:identity-federation:handler:config:2.1"&gt;
+              &lt;Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2LogOutHandler" /&gt;
+              &lt;Handler class="org.picketlink.identity.federation.web.handlers.saml2.SAML2AuthenticationHandler" /&gt;
+              &lt;Handler class="org.picketlink.identity.federation.web.handlers.saml2.RolesGenerationHandler" /&gt;
+            &lt;/Handlers&gt;
           &lt;/PicketLink&gt;
+          </pre>
         %p
           This file is responsible to provide all the configuration for a given Service Provider. PicketLink provides a lot of configuration options such as signature support and encryption. For more information, please read this
           %a(href="https://docs.jboss.org/author/display/PLINK/Service+Provider+Configuration")documentation.
@@ -268,17 +299,18 @@ title: Single Sign-On Using Security Assertion Markup Language (SAML)
           %p
             Before deploying your Identity Provider or Service Provider application to JBoss EAP 6 or WildFly, you need to configure the PicketLink dependency in <b>META-INF/jboss-deployment-structure.xml</b>. Add this file
             to your deployment with the following content:
-          %pre
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jboss-deployment-structure&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;deployment&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;dependencies&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;module name="org.picketlink"/&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/dependencies&gt;
-            &nbsp;&nbsp;&nbsp;&nbsp;&lt;/deployment&gt;
+        :markdown
+          <pre class="brush: xml;">
+            &lt;jboss-deployment-structure&gt;
+              &lt;deployment&gt;
+                &lt;dependencies&gt;
+                  &lt;module name="org.picketlink"/&gt;
+                &lt;/dependencies&gt;
+              &lt;/deployment&gt;
             &lt;/jboss-deployment-structure&gt;
-          %p
-            PicketLink is part of JBoss EAP 6 and WildFly via JBoss Modules. The module is located at <b>${JBOSS_HOME}/modules/system/layers/base/org/picketlink</b>.
-          %p
+          </pre>
+        %p
+          PicketLink is part of JBoss EAP 6 and WildFly via JBoss Modules. The module is located at <b>${JBOSS_HOME}/modules/system/layers/base/org/picketlink</b>.
       .row-fluid
         .span12
           %h3 Note About the PicketLink Federation Quickstarts

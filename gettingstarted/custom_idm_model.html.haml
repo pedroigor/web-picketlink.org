@@ -230,12 +230,12 @@ title: Custom Identity Model
             // stores the application in the acme partition
             identityManager.add(salesApplication);
 
-            IdentityQuery<Application> query = identityManager.createIdentityQuery(Application.class);
+            IdentityQuery&lt;Application&gt; query = identityManager.createIdentityQuery(Application.class);
 
             // let's check if the application is stored by querying by the identifier
             query.setParameter(Application.ID, salesApplication.getId());
 
-            List<Application> applications = query.getResultList();
+            List&lt;Application&gt; applications = query.getResultList();
 
             assertEquals(1, applications.size());
 
@@ -417,12 +417,12 @@ title: Custom Identity Model
             // stores the managers group
             identityManager.add(salesManagers);
 
-            IdentityQuery<Group> query = identityManager.createIdentityQuery(Group.class);
+            IdentityQuery&lt;Group&gt; query = identityManager.createIdentityQuery(Group.class);
 
             // query all childs of sales unit
             query.setParameter(Group.PARENT, salesUnit);
 
-            List<Group> salesUnitChilds = query.getResultList();
+            List&lt;Group&gt; salesUnitChilds = query.getResultList();
 
             assertEquals(1, salesUnitChilds.size());
             </pre>
@@ -442,12 +442,12 @@ title: Custom Identity Model
             // stores the global role.
             acmeIdentityManager.add(globalRole);
 
-            IdentityQuery<Role> query = acmeIdentityManager.createIdentityQuery(Role.class);
+            IdentityQuery&lt;Role&gt; query = acmeIdentityManager.createIdentityQuery(Role.class);
 
             // let's check if the role is stored by querying using a name
             query.setParameter(Role.NAME, globalRole.getName());
 
-            List<Role> roles = query.getResultList();
+            List&lt;Role&gt; roles = query.getResultList();
 
             assertEquals(1, roles.size());
 
@@ -526,12 +526,12 @@ title: Custom Identity Model
             // stores the user in the acme partition
             identityManager.add(user);
 
-            IdentityQuery<User> query = identityManager.createIdentityQuery(User.class);
+            IdentityQuery&lt;User&gt; query = identityManager.createIdentityQuery(User.class);
 
             // let's check if the user is stored by querying by name
             query.setParameter(User.USER_NAME, user.getUserName());
 
-            List<User> users = query.getResultList();
+            List&lt;User&gt; users = query.getResultList();
 
             assertEquals(1, users.size());
 
@@ -715,7 +715,7 @@ title: Custom Identity Model
           // assign application specific role to user
           relationshipManager.add(new Grant(user, applicationRole));
 
-          RelationshipQuery<Grant> query = relationshipManager.createRelationshipQuery(Grant.class);
+          RelationshipQuery&lt;Grant&gt; query = relationshipManager.createRelationshipQuery(Grant.class);
 
           query.setParameter(Grant.ASSIGNEE, user);
 
@@ -754,7 +754,7 @@ title: Custom Identity Model
           // user us now a member of application specific group
           relationshipManager.add(new GroupMembership(user, applicationGroup));
 
-          RelationshipQuery<GroupMembership> query = relationshipManager.createRelationshipQuery(GroupMembership.class);
+          RelationshipQuery&lt;GroupMembership&gt; query = relationshipManager.createRelationshipQuery(GroupMembership.class);
 
           query.setParameter(GroupMembership.MEMBER, user);
 
@@ -803,7 +803,7 @@ title: Custom Identity Model
           Application salesApplication = getSalesApplication();
           relationshipManager.add(new ApplicationAccess(group, salesApplication));
 
-          RelationshipQuery<ApplicationAccess> query = relationshipManager.createRelationshipQuery(ApplicationAccess.class);
+          RelationshipQuery&lt;ApplicationAccess&gt; query = relationshipManager.createRelationshipQuery(ApplicationAccess.class);
 
           query.setParameter(ApplicationAccess.ASSIGNEE, group);
 

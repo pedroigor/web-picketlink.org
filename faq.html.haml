@@ -24,10 +24,22 @@ title: FAQ
           %h2 Where can I get it? 
           %p
             All libraries are available on 
-            %a(href="https://repository.jboss.org/nexus/index.html#nexus-search;gav~org.picketlink~~2.5.1.Final~~")  JBoss Release Repository 
+            %a(href="https://repository.jboss.org/nexus/index.html#nexus-search;gav~org.picketlink~~#{site.pom.latest.version}~~")  JBoss Release Repository
             and 
-            %a(href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.picketlink%22%20AND%20v%3A%222.5.1.Final%22") Maven Central.
+            %a(href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.picketlink%22%20AND%20v%3A%22#{site.pom.latest.version}%22") Maven Central.
           %p
             You can also use the 
-            %a(href="https://github.com/picketlink/picketlink-installer") PicketLink Installer 
-            to not only get the libraries, but to configure a JBoss Enterprise Application Platform 6 distribution with all the necessary libraries/modules. 
+            %a(href="http://downloads.jboss.org/picketlink/2/latest/picketlink-installer-#{site.pom.latest.version}.zip") PicketLink Installer
+            to not only get the libraries, but to configure a JBoss Enterprise Application Platform 6 or WildFly distribution with all the necessary libraries/modules.
+          %h2 What Application Servers are Supported ?
+          %p
+            %a(href="#{site.base_url}/appsecurity/")PicketLink Base
+            can be used in any application server compliant with JEE 6 or 7. Most features are based on CDI.
+          %p
+            %a(href="#{site.base_url}/appsecurity/idm/")PicketLink Identity Management
+            is a Java SE library, so you can use it alone in any application server.
+          %p
+            If you're looking for
+            %a(href="#{site.base_url}/federation/")PicketLink Federation SAML Support
+            , you can use Tomcat, JBoss EAP 6 and WildFly. We're working to support others such as Jetty.
+
