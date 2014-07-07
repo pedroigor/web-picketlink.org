@@ -254,7 +254,7 @@ title: First PicketLink CDI Application
             <pre class="brush: xml;">
             &lt;html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"&gt;
               &lt;body&gt;
-                &lt;ui:fragment rendered="<b>{not identity.loggedIn}</b>"&gt;
+                &lt;ui:fragment rendered="&#35;{not identity.loggedIn}"&gt;
                   Please, enter your credentials:&lt;br/&gt;&lt;br/&gt;
                   &lt;h:form&gt;
                     Username: &lt;h:inputText value="&#35;{loginCredentials.userId}" required="true"/&gt;&lt;br/&gt;
