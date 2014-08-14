@@ -1,0 +1,14 @@
+= JUDCon 2014 Brazil
+pedroigor
+2014-08-13
+:revdate: 2014-08-13 00:00:00 +0100
+:awestruct-tags: [events, judcon]
+:awestruct-layout: news
+:source-highlighter: coderay
+
+The International JBoss Users and Developer Conference, and premier JBoss developer event “By Developers, For Developers,”
+is pleased to announce that the call for papers for JUDCon: 2014 Brazil, which will be held in São Paulo on September 26th,
+is now open! Got Something to Say? Say it at JUDCon: 2014 Brazil! Call for papers ends at 5 PM on August 22nd, 2014 São Paulo time,
+and selected speakers will be notified by August 29th, so don't delay!
+
+More details at http://www.jboss.org/events/JUDCon/2014/brazil/cfp[http://www.jboss.org/events/JUDCon/2014/brazil/cfp]
