@@ -113,17 +113,19 @@ title: First PicketLink CDI Application
             &lt;/dependencyManagement&gt;
 
             &lt;dependencies&gt;
+              <!-- PicketLink Dependency -->
               &lt;dependency&gt;
                 &lt;groupId&gt;org.picketlink&lt;/groupId&gt;
-                &lt;artifactId&gt;picketlink-api&lt;/artifactId&gt;
+                &lt;artifactId&gt;picketlink&lt;/artifactId&gt;
                 &lt;scope&gt;compile&lt;/scope&gt;
               &lt;/dependency&gt;
 
-              &lt;dependency&gt;
-                &lt;groupId&gt;org.picketlink&lt;/groupId&gt;
-                &lt;artifactId&gt;picketlink-impl&lt;/artifactId&gt;
-                &lt;scope&gt;runtime&lt;/scope&gt;
-                &lt;/dependency&gt;
+              <!-- CDI API Dependency -->
+              &lt;dependency>
+                  &lt;groupId&gt;javax.enterprise&lt;/groupId&gt;
+                  &lt;artifactId&gt;cdi-api&lt;/artifactId&gt;
+                  &lt;scope&gt;provided&lt;/scope&gt;
+              &lt;/dependency&gt;
             &lt;/dependencies&gt;
             </pre>
           %p
@@ -182,6 +184,8 @@ title: First PicketLink CDI Application
 
                 return "/signin.xhtml";
               }
+
+              // getters and setters
             }
             </pre>
           .well
@@ -249,7 +253,7 @@ title: First PicketLink CDI Application
           %p
             Now that your application is registering new users you can authenticate them based on the information they provide on the registration page.
           %p
-            That said, let's create a login page.
+            That said, let's create a login page. Add the following page at this location: <b>src/main/webapp/signin.xhtml</b>.
           :markdown
             <pre class="brush: xml;">
             &lt;html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"&gt;

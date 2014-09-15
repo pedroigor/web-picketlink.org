@@ -1,0 +1,42 @@
+= PicketLink 2.7.0.Beta1 is out!
+pedroigor
+2014-08-25
+:revdate: 2014-08-25 00:00:00 +0100
+:awestruct-tags: [announcement, release]
+:awestruct-layout: news
+:source-highlighter: coderay
+
+We're very pleased to announce PicketLink v2.7.0.Beta1 release. This is a major release containing several features and improvements.
+
+* http://forge.jboss.org/addon/org.picketlink.tools.forge:picketlink-forge-addon[PicketLink Forge Addon]
+* Better support for http://docs.jboss.org/picketlink/2/latest/reference/html-single/index.html#chap-Http_Security[Http and Web Security]
+* Configuration improvements to make it even more simple. Specially when working with the JPA Identity Store.
+* Added a new identity store to better handle tokens. Useful to consume tokens and extract identity information from tokens regardless their format.
+* Improvements to the LDAP Identity Store. Thanks to **Marek Posolda**.
+* Easily turn your application as a Token Provider using any token format such as JWT and JWS.
+* https://docs.jboss.org/author/display/PLINK/Back-Channel+Single+Logout[SAML Back-Channel Single Logout].
+* PicketLink SAML and KeyCloak Integration.
+* Better support for JWT and JOSE specifications. Thanks to **Giriraj Sharma**.
+* Updates to the documentation.
+* Quickstarts were updated to consider some of the configuration changes. New ones added.
+* Bug fixes. See release notes for more details.
+
+The PicketLink Forge Addon is a great step to provide a better experience for developers looking for securing their apps. It provides
+an initial feature set to easily enable Identity Management, Authentication and Authorization to your project using PicketLink.
+Thanks for **George Gastaldi** and **Lincoln Baxter**, from http://forge.jboss.org/[JBoss Forge], for all support during the development of this addon.
+
+Our community was asking for built-in features for Http and Web Security and one of the outcomes of this release is a set of features
+to easily secure Web-Based applications, including RESTful applications. Given its path-oriented configuration, the new API provides great flexibility with a deep
+integration with the Java Servlet API. In a nutshell, every single feature provided by PicketLink is now available to secure your RESTFul endpoints, web pages or any other resources in your application.
+
+Another important aspect of this release is about tokens support. PicketLink now provides an API that you can use to create Token Providers and Consumers, considering
+any token format you want, including support for the JWT and JWS specifications.
+
+Also, an initial work has began in order to provide built-in integration with PicketLink SAML and KeyCloak. You can easily switch between
+different identity providers without change a single line of business code in your application. In the next releases we're going to officialy support
+this functionality. However, if you want to give it a try, please join us at #picketlink on irc.freenode.net.
+
+For last, please take a look at the quickstarts. Some of them were updated to reflect the improvements to the configuration. Specially when using the
+JPA Identity Store.
+
+For more details and release notes, take a look https://issues.jboss.org/secure/ReleaseNote.jspa?projectId=12310923&version=12323644[here].
