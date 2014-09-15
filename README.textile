@@ -1,0 +1,188 @@
+h1. !http://www.jboss.org/dms/picketlink/images/picketlink-banner-1180px.png!
+
+h2. Picketlink Website Source (http://picketlink.org/)
+
+This repository contains the source of the Picketlink website (hosted using "github pages":http://pages.github.com), to which the "picketlink.org":picketlink.org hostname resolves.
+
+The website is built using "Awestruct":http://awestruct.org. The master branch contains the unprocessed website source. From that content, Awestruct generates a static website under the @_site@ directory. The website is published to the public site by pushing the contents of the @_site@ directory to the master branch.
+
+h2. Setting Up Awestruct and Rails using Ruby Version Manager(RVM)
+
+This beginner's guide will set up with Ruby 2.1.0, RVM and Rails 4.0.2 and is specifically written for a development environment on Ubuntu 13.04, but will probably work on many other operating systems, including older / newer versions of Ubuntu, Debian and Fedora.
+
+If you're looking for a way to set this up on a production server then I would recommend the use of "the railsready script":https://github.com/joshfng/railsready which installs all the necessary packages for Ruby 2.1.0p0 and then that version of Ruby itself, Bundler and Rails. Then it leaves it up to you to install Apache or nginx to get your application online.
+
+bc. Under no circumstance should you install Ruby, Rubygems or any Ruby-related packages from apt-get. \ 
+This system is out-dated and leads to major headaches. Avoid it for Ruby-related packages. \
+We do Ruby, we know what's best. Trust us.
+
+This guide will go through installing the RVM (Ruby Version Manager), then a version of Ruby (2.1.0), then Rails and finally Bundler. Bundler can handle the rest of the setup, installation of awestruct and associated ruby gems automatically.
+
+h3. Steps Necessary
+
+1. Installation of @Awestruct@
+2. Creation of Project Directory or Clone/Fork Git Repository
+
+h3. Installation Of Awestruct
+
+Reference: "Awestruct Installation Reference":http://awestruct.org/getting_started/
+
+h3. Fedora
+
+Install Ruby and RVM
+
+bc. curl -L https://get.rvm.io | bash -s stable --ruby=1.9.3
+
+Ensure you have some dependencies that Nokogiri needs.
+
+bc. sudo yum install libxml2-devel libxslt libxslt-devel
+
+Ensure you have development tools installed. Install those libraries if you don't have them already installed. This should avoid some errors when using gem, where you get messages telling you that "You need to install the development toolsfirst."
+
+bc. sudo yum install gcc gcc-c++
+
+h3. Install Awestruct, Asciidoctor, rake and bundler
+
+bc. gem install awestruct asciidoctor rake bundler
+
+This is important. Check if the installation has been successful.
+
+bc. $ awestruct --version \
+WARNING: Missing required dependency to activate optional built-in extension coffeescripttransform.rb \
+  cannot load such file -- coffee-script \
+WARNING: Missing required dependency to activate optional built-in extension minify.rb \
+  cannot load such file -- htmlcompressor \
+Awestruct: 0.5.3 \
+http://awestruct.org/
+
+Looks like @awestruct@ has been installed.
+
+h2. Previewing the Site Locally
+
+Now that you have @awestruct@ installed, you can preview the website locally by running it in development mode. Development mode uses a file monitor to automatically update the site when you make a change to the source files.
+
+To run the site, you first need the source code. Begin by cloning the website source code from git:
+
+bc. git clone git://github.com/picketlink/web-picketlink.org.git
+
+Run the following command to launch the preview server:
+
+bc. awestruct -d
+
+Visit the following page in your browser:
+
+"http://localhost:4242":http://localhost:4242
+
+You're now awestruct!
+
+If you only want to generate once when you start the server, use this command:
+
+bc. awestruct --server -P development
+
+Add the @--force@ flag to either command to regenerate the site from scratch. You can also remove the _tmp and _site directories to clean the generated files.
+
+h2. Creation of Project Directory
+
+You just have to do mkdir and cd into a new directory.
+
+bc. mkdir awestruct
+
+bc. cd awestruct/
+
+Typically you would use @awestruct@ to create the template for you.
+
+In the case of PicketLink, we have a git workspace for the website.
+
+Assuming you have forked the website workspace, just go to the forked workspace directory.
+
+h2. Work on the Website Files
+
+In the directory where your project files are, you can run @awestruct@ in development mode to create the files.
+
+bc. awestruct -d
+
+Try to update rake
+
+bc. rake update
+
+Now run rake as follows:
+
+bc. rake
+
+Locally, you can test your website at http://localhost:4242
+
+h2. Workspace - clearing out generated files
+
+bc. rake clean
+
+h2. Development Mode
+
+bc. awestruct -d
+
+This will start the web server and you can test at port 4242
+
+h2. Staging Profile
+
+bc. awestruct -Pstaging
+
+This does not start the web server. The generated files under _site are all with staging profile.
+
+h2. Publish the Site
+
+When you are ready to publish, follow these steps:
+
+bc. rake clean
+ 
+bc. awestruct -Pproduction
+
+This will minimize css,js etc and make the files under _site directory ready for the website.
+
+Now I just use scp to upload the files in the _site directory into the production box.
+The command I use from the _site directory is the following:
+
+bc. scp -i MY_DOT_RSA_FILE -r . picketlink@FILE_SERVER_NAME:/www_htdocs/picketlink/
+
+If you are using the default xxx.rsa file, then you do not need the -i option in scp.
+
+Remember to get the @FILE_SERVER_NAME@ from one of the PL developers.
+
+h2. Conventions
+
+"Haml":http://haml-lang.com is the preferred abstract HTML markup language.
+
+* "Haml Reference":http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html
+
+ "Textile":http://redcloth.org/textile is the preferred text markup language.
+
+* "Textile Reference":http://redcloth.org/textile
+
+"Sass":http://sass-lang.com and "Compass":http://compass-style.org are the preferred CSS frameworks.
+
+* "Sass Reference":http://sass-lang.com/docs/yardoc/file.SASS_REFERENCE.html
+* "Compass Reference":http://compass-style.org/reference/compass
+
+Source files are indented using 2 spaces. Haml files require the same indentation size throughout. Ruby hashes should have no leading or trailing spaces and options such be seperated by a comma followed by a space (e.g., @{:href=>"http://picketlink.org", title=>"Picketlink Project Site"}@).
+
+Note: In a HAML document, if you use the equals seperator (=) rather than a greater than equals (=>) in a hash key-value assignment, Awestruct will crash.
+
+h2. Resources
+
+* "Social Media Icons":http://icondock.com/free/vector-social-media-icons
+* Currently using "Google Prettify":http://balupton.github.com/jquery-syntaxhighlighter, could use "jQuery wrapper"
+* Icons from Faenza Gnome icon theme
+* "A pure CSS sticky footer technique":http://ryanfait.com/sticky-footer/
+* "Font typography:":http://www.dev-archive.net/articles/typograph1-en.html#Ch23
+* "Ideas for textile plugins:":http://octopress.org/docs/plugins/
+* "HTML/CSS/JS 'fiddle' tool:":http://jsfiddle.net
+* "Sass resources:":http://thesassway.com/
+* "Language codes:":http://joeclark.org/book/sashay/serialization/AppendixB.html
+
+h3. References
+
+"HAML Reference":http://haml.info/docs/yardoc/file.REFERENCE.html
+
+JBoss.org Template And Other Important "Information":http://example.jboss.org/
+
+h3. Additional Links
+
+"Tarball of files of old website":https://drive.google.com/file/d/0B1686J5nuKI6dllmSVN6YkFhaWM/edit?usp=sharing
