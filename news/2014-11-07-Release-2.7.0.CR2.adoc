@@ -1,0 +1,20 @@
+= PicketLink 2.7.0.CR2 is out!
+pedroigor
+2014-11-07
+:revdate: 2014-11-07 00:00:00 +0100
+:awestruct-tags: [announcement, release]
+:awestruct-layout: news
+:source-highlighter: coderay
+
+We're very pleased to announce PicketLink v2.7.0.CR2 release.
+
+The most significant changes included in this version are related with:
+
+* Improvements to PicketLink IDM Query API
+* Improvements to SAML Metadata, Encryption and Attributes Support
+* The SAML Service Provider Servlet Filter was updated
+
+The PicketLink Query API is now more flexible and supports different type of conditions when querying your identity types. The documentation
+was updated to reflect these changes. Some methods were marked as deprecated, but changes do not impact backward compatibility.
+
+For more details and release notes, take a look https://issues.jboss.org/secure/ReleaseNote.jspa?projectId=12310923&version=12323647[here].

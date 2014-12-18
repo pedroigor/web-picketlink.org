@@ -1,0 +1,35 @@
+= PicketLink 2.7.0.CR1 is out!
+pedroigor
+2014-10-07
+:revdate: 2014-10-07 00:00:00 +0100
+:awestruct-tags: [announcement, release]
+:awestruct-layout: news
+:source-highlighter: coderay
+
+We're very pleased to announce PicketLink v2.7.0.CR1 release. This is a major release containing several improvements and bug fixes. Thanks for
+all feedback from our community. This version was delayed due to a syncronization with EAP roadmap. We apologize for that.
+
+The most significant changes included in this version are related with:
+
+* Permission API
+* SAML
+
+The Permission API is now supported by the File-based Identity Store. A few issues were also fixed and a new quickstart created to demonstrate
+how you can use permissions programmatically or using annotations:
+
+* https://github.com/jboss-developer/jboss-picketlink-quickstarts/tree/master/picketlink-authorization-acl
+
+Regarding SAML support, there are a few improvements to the PicketLink SAML IdP that provides more flexibility if you want to customize how SAML Assertions
+are issued, specially when providing your own attributes. You may want to check these links:
+
+* https://docs.jboss.org/author/display/PLINK/User-defined+SAML+Assertion+Attributes
+* https://docs.jboss.org/author/display/PLINK/SAML2AuthenticationHandler
+
+Another important improvement was to the Single Logout Support. The PicketLink IdP now supports the Back-Channel Single Logout mode, as
+described by the link bellow.
+
+* https://docs.jboss.org/author/display/PLINK/Back-Channel+Single+Logout
+
+On the next releases we're going to focus on specific performance tests and also to make configuration even easier if you are using CDI.
+
+For more details and release notes, take a look https://issues.jboss.org/secure/ReleaseNote.jspa?projectId=12310923&version=12323646[here].

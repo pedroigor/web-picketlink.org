@@ -480,25 +480,20 @@ title: Identity Management Overview
             &lt;/dependency&gt;
             </pre>
           %p
-            You should also provide a producer method to produce the <b>EntityManager</b> you want to use.
+            You should also provide a producer to the <b>EntityManager</b> you want to use.
           :markdown
             <pre class="brush: java;">
-            @PersistenceContext(unitName = "my-app-pu")
-            private EntityManager myApplicationEntityManager;
-
-            @PersistenceContext(unitName = "picketlink-pu")
-            private EntityManager picketlinkEntityManager;
-
+            @PersistenceContext
             @Produces
-            @PicketLink
-            public EntityManager getPicketLinkEntityManager() throws Exception {
-              return this.picketlinkEntityManager;
-            }
+            private EntityManager picketlinkEntityManager;
             </pre>
+          %p
+            When using JPA, if you have a single <code>EntityManager</code> in your application you can produce it just like above. However, if you have multiple ones
+            you must annotate the producer with the <code>@PicketLink</code> qualifier.
           %p
             It is important to highlight that the JPA entity classes provided by <b>picketlink-idm-simple-schema</b> are just a default mapping for the Basic Model. You're not forced to use it, the same way you're not forced to use the Basic Model.
             Actually, we strongly recommend users to design their own identity model (probably using the Basic Model as an example) and also use the picketlink-idm-simple-schema as an example about how to map your identity model types using JPA.
-          %p
+          .well
             Take a look at the
             %a(href="http://docs.jboss.org/picketlink/2/latest/reference/html-single/#chap-Identity_Management_-_Working_with_JPA")JPA Identity Store
             documentation for more details.
@@ -513,9 +508,6 @@ title: Identity Management Overview
             <pre class="brush: java;">
             public static class IDMConfiguration {
 
-              @Inject
-              private EEJPAContextInitializer contextInitializer;
-
               public void observeIdentityConfigurationEvent(@Observes IdentityConfigurationEvent event) throws Exception {
                 IdentityConfigurationBuilder builder = event.getConfig();
 
@@ -523,21 +515,6 @@ title: Identity Management Overview
                   .named("custom-config")
                     .stores()
                       .jpa()
-                        .mappedEntity(
-                          AccountTypeEntity.class,
-                          RoleTypeEntity.class,
-                          GroupTypeEntity.class,
-                          IdentityTypeEntity.class,
-                          RelationshipTypeEntity.class,
-                          RelationshipIdentityTypeEntity.class,
-                          PartitionTypeEntity.class,
-                          PasswordCredentialTypeEntity.class,
-                          DigestCredentialTypeEntity.class,
-                          X509CredentialTypeEntity.class,
-                          OTPCredentialTypeEntity.class,
-                          AttributeTypeEntity.class
-                        )
-                        .addContextInitializer(this.contextInitializer)
                         .supportAllFeatures();
               }
             }
