@@ -1,0 +1,14 @@
+= PicketLink 2.7.0.CR3 is out!
+pedroigor
+2014-12-23
+:revdate: 2014-12-23 00:00:00 +0100
+:awestruct-tags: [announcement, release]
+:awestruct-layout: news
+:source-highlighter: coderay
+
+We're very pleased to announce PicketLink v2.7.0.CR3 release.
+
+This release includes important bug fixes and enchancements. One of the main features included in this release is the support
+for Security Levels. For more details, please take a look at the http://docs.jboss.org/picketlink/2/latest/reference/html/sect-Multi-Level_Authentication.html[documentation].
+
+For more details and release notes, take a look https://issues.jboss.org/secure/ReleaseNote.jspa?projectId=12310923&version=12326066[here].
