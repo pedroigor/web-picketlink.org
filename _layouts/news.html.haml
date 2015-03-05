@@ -14,18 +14,5 @@ layout: project
         %li{:class=>('disabled' unless page.previous_post)}
           %a{:href=>page.previous_post ? "#{site.base_url}#{page.previous_post.url}" : '#'} Older &raquo;
   .span4
-    - if author
-      .row-fluid
-        .span12.well.post-bg 
-          %h2<= author.name;
-          %p
-            %img.pull-right.portrait{:src=>"#{site.base_url}/images/#{author.avatar}"}
-            %span.bio-size<=author.bio
-          %p.bio-size
-            %strong Location:&nbsp;
-            = author.location
-          %p.bio-size
-            %strong Occupation:&nbsp;
-            = author.occupation
     .row-fluid
       = partial('latest-news-sidebar.html.haml')

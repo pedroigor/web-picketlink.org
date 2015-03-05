@@ -9,6 +9,12 @@ pedroigor
 We're very pleased to announce PicketLink v2.7.0.CR3 release.
 
 This release includes important bug fixes and enchancements. One of the main features included in this release is the support
-for Security Levels. For more details, please take a look at the http://docs.jboss.org/picketlink/2/latest/reference/html/sect-Multi-Level_Authentication.html[documentation].
+for Security Levels and Adaptive Access Control. For more details, please take a look at the http://docs.jboss.org/picketlink/2/latest/reference/html/sect-Multi-Level_Authentication.html[documentation].
+The following quickstarts were also added to the repository:
+
+* https://github.com/jboss-developer/jboss-picketlink-quickstarts/tree/master/picketlink-authentication-security-level
+* https://github.com/jboss-developer/jboss-picketlink-quickstarts/tree/master/picketlink-levels-complex
+
+Special thanks for Michal Trnka for all contributions to the security levels support !
 
 For more details and release notes, take a look https://issues.jboss.org/secure/ReleaseNote.jspa?projectId=12310923&version=12326066[here].
