@@ -1,0 +1,35 @@
+= PicketLink 2.7.0.Final is out!
+pedroigor
+2015-02-27
+:revdate: 2015-02-27 00:00:00 +0100
+:awestruct-tags: [announcement, release]
+:awestruct-layout: news
+:source-highlighter: coderay
+
+We’re very pleased to announce PicketLink v2.7.0.Final release, finally.
+
+Thanks the community for all feedback since the last release. This release includes a number of improvements and bug fixes over the last release.
+
+== PicketLink JEE Security
+
+* The Http Security API now supports CORS. Now you can enable and configure http://docs.jboss.org/picketlink/2/latest/reference/html-single/index.html#CORS_Support[CORS] for each of your protected paths or path groups.
+
+* For those using JSF, a new example was added to our quickstart repository that demonstrates how to perform FORM authentication using JSF and the Http Security API. You can find the quickstart https://github.com/jboss-developer/jboss-picketlink-quickstarts/tree/master/picketlink-authentication-form-with-jsf[here].
+
+* Better integration with http://www.ocpsoft.org/prettyfaces/[PrettyFaces Rewrite].
+
+* Better support when using PicketLink JEE Security in HA environments.
+
+== PicketLink Identity Management
+* Added support for http://docs.jboss.org/picketlink/2/latest/reference/html-single/index.html#Managed_attributes[Managed Attributes]. This is a major improvement on how you create your identity model, specially when using JPA. In conjunction with the http://docs.jboss.org/picketlink/2/latest/reference/html-single/index.html#Default_Database_Schema[Default Schema], you can write your own types very easily without create their corresponding JPA entities. Managed attributes allows you to store properties as ad-hoc attributes and still use them in a type-safe manner.
+
+* Permission API is now supporting cross-partition references for identity types. That means you can use, for example, a LDAP identity store for your users and still be able to manage permissions for them using a JPA identity store.
+
+* LDAP authentication was improved in order to authenticate users despite their location in the LDAP tree. This is specially useful if you are using PicketLink and LDAP in read-only mode.
+
+== PicketLink SAML Support
+* Improvements to Backchannel Logout, specially when using SSL/TLS.
+
+* A number of important bug fixes and improvements.
+
+More details about the issues resolved by this version can be found on the https://issues.jboss.org/secure/ReleaseNote.jspa?projectId=12310923&version=12323643[Release Notes].

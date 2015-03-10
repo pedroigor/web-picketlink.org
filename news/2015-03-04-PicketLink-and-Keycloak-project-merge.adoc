@@ -1,0 +1,52 @@
+= PicketLink and Keycloak projects are merging!
+bdaw
+2015-03-10
+:revdate: 2015-03-10 00:11:00 +0100
+:awestruct-tags: [announcement, keycloak]
+:awestruct-layout: news
+:source-highlighter: coderay
+
+Together with new http://picketlink.org[PicketLink] 2.7.0.Final release, we would like to announce that http://picketlink.org[PicketLink] and http://keycloak.org[Keycloak] projects will be merging their efforts. Code base of both will get unified and new features will be developed in a single place. 
+
+As part of this merge all key features of http://picketlink.org[PicketLink] will get included into http://keycloak.org[Keycloak]. Combining strengths of both projects and providing their communities a single polished and unified security solution. Joining both efforts should enable faster progress on new features which will be beneficial for all users and developers leveraging those solutions. 
+
+== http://picketlink.org[PicketLink] origins
+
+http://picketlink.org[PicketLink] project was originally started being a central hub for all security related efforts for Red Hat Middleware. It is a security framework providing a rich set of capabilities for Java EE applications including Authentication, Authorization or Permissions APIs and flexible IDM solution. One of other key features adopted and used in many organizations world wide is Federation component providing SAML Identity and Service Provider capabilities. On top of that it contains a toolbox of different useful APIs and helper classes in identity and security areas. 
+
+== http://keycloak.org[Keycloak] origins
+
+http://keycloak.org[Keycloak] initially originated as a merge of two initiatives. First one was https://developer.jboss.org/wiki/ResteasySkeletonKeyWebSSOOAuth[SkeletonKey module] from http://resteasy.jboss.org/[RestEasy] project aiming to provide easy security for REST APIs in Java EE world. Second part was a prototype to provide easily consumable Social Login capabilities in a form of Identity Broker. Both merged together with aim to expose out of the box security capabilities for application developers that they could seamlessly integrate. 
+
+== Reasons for merging both projects
+
+While both project initially covered slightly different areas and angles they naturally started overlapping over time. http://keycloak.org[Keycloak] from being Identity Broker grew into being fully fledged Identity Provider. Initially it was only exposing basic token based security for REST APIs built on top of OAuth2 spec. Currently it aims full OpenID Connect interoperability, providing base SAML IdP capabilities and working on developing integration points via Kerberos or Identity Provider Brokering set of features.  With all of this work happening http://keycloak.org[Keycloak] naturally stepped into area which was initially covered by http://picketlink.org[PicketLink] with it’s framework capabilities.
+
+Major difference between http://picketlink.org[PicketLink] and http://keycloak.org[Keycloak] has always been framework vs out of the box nature of both solutions. http://picketlink.org[PicketLink] was always focusing on providing easily used set of base features with flexibility to extend them your way to build on top. This is still the key strength that many users love. It acts a security toolbox from which you can pick from according to your needs. Original idea behind http://keycloak.org[Keycloak] was to provide out of the box solution which could be embedded or integrated into your application. Externalizing most of common security capabilities that developers need to repeatedly provide for their applications - like login screens, OTP or social login. All of those features accompanied with extensive and well designed UI console, resulted in skyrocketing adoption in the community
+
+Developers engaged in both projects started hearing repeating questions from community users around overlap, differences and their future. After long debates we decided it is high time to merge them!
+
+We will start merging key parts of http://picketlink.org[PicketLink] codebase into http://keycloak.org[Keycloak] and proceed further under this project name. 
+
+== What you can expect happening during next few months?
+
+* Specific parts of http://picketlink.org[PicketLink] codebase being forked and merged into http://keycloak.org[Keycloak]. We are starting with http://picketlink.org[PicketLink] Federation / SAML. 
+* Inclusion or implementation of particular features will get discussed in public on the http://keycloak.org[Keycloak] https://lists.jboss.org/mailman/listinfo/keycloak-dev[project mailing list]. We are looking forward for your participation there as we would like to hear your feedback on changes that we are doing. 
+* Web sites for both projects will get slightly changed to reflect new situation.
+* Many new cool features coming shortly!
+
+== What happens to http://picketlink.org[PicketLink] project? 
+
+Short answer is - nothing dramatic really… No one is switching the lights off! All project sources, materials and communication channels will still remain available and open for the community. Developers associated with Red Hat will be focusing much more on new features development in http://keycloak.org[Keycloak] project. However if there are contributions coming in from the community we’ll still assist you as much as we can. Although expect repeating encouragement from our side to try http://keycloak.org[Keycloak] out everytime you ask for a new http://picketlink.org[PicketLink] feature ;) 
+
+=== Please find additional link:/keycloak-merge-faq[FAQ] on http://picketlink.org[PicketLink] project website. 
+
+We hope it will answer most of your questions or concerns. 
+
+{empty} +
+
+
+
+==== Pedro Igor Silva - http://picketlink.org[PicketLink] Project Leader
+==== Bill Burke and Stian Thorgersen - http://keycloak.org[Keycloak] Project Leaders
+==== Bolesław Dawidowicz - Security Platform Architect at Red Hat.
