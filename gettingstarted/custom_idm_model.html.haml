@@ -212,6 +212,7 @@ title: Custom Identity Model
               }
 
             }
+            </pre>
           %p
             You may notice that <code>Application</code> is extending <code>AbstractIdentityType</code>.
             The reason for that is that an application can also be used in relationships in order to authorize access from users.
@@ -538,6 +539,7 @@ title: Custom Identity Model
             User storedUser = users.get(0);
 
             assertEquals(user.getUserName(), storedUser.getUserName());
+            </pre>
         %p
           An <code>Account</code> can use any of the built-in credentials provided by PicketLink such as username/password and One-Time Passwords.
           Considering our requirements, users should be capable to authenticate using an username/password credential.
@@ -562,6 +564,7 @@ title: Custom Identity Model
             identityManager.validateCredentials(credentials);
 
             assertEquals(VALID, credentials.getStatus());
+            </pre>
         %h2
           Creating a Relationship
         %p

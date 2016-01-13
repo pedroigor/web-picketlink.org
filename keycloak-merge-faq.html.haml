@@ -1,0 +1,169 @@
+---
+layout: project
+title: FAQ
+---
+
+.row-fluid
+  .hero-unit
+    %h1 FAQ
+    %p 
+      Frequently Asked Questions about merge of 
+      %a(href="http://picketlink.org") PicketLink 
+      and 
+      %a(href="http://keycloak.org") Keycloak 
+      projects.
+  .row-fluid
+    .span12.well.post-bg
+      .row-fluid
+        .span8
+          %h3 Q) What is really happening?
+          %p 
+            %b A) 
+            Several parts of PicketLink will get merged/forked into 
+            %a(href="http://keycloak.org") Keycloak 
+            project and work on any new features will happen there.
+      .row-fluid
+        .span8
+          %h3 Q) What happens to PicketLink project?
+          %p 
+            %b A) 
+            Project remains where it is. Website, JIRA, sources on github, downloads, documentation, mailing lists and etc. will still be available as they currently are. 
+      .row-fluid
+        .span8
+          %h3 Q) Can I still use PicketLink?
+          %p 
+            %b A) 
+            Yes. Definitely!
+      .row-fluid
+        .span8
+          %h3 Q) What happens to Red Hat Middleware products that rely on PicketLink ?
+          %p 
+            %b A) 
+            There is no immediate impact to Red Hat products.
+      .row-fluid
+        .span8
+          %h3 Q) Can I expect new features being developed for PicketLink?
+          %p 
+            %b A) 
+            Rather not from Red Hat side. Although no one will block community contributions. 
+      .row-fluid
+        .span8
+          %h3 Q) Can I expect new releases of PicketLink in the future?
+          %p 
+            %b A) 
+            It depends on the community. Project developers associated with Red Hat will focus mainly on developing new features in 
+            %a(href="http://keycloak.org") Keycloak 
+            project. Although if there are PRs coming from the community additional releases may still happen. 
+      .row-fluid
+        .span8
+          %h3 Q) What about Federation / SAML capabilities provided by PicketLink?. 
+          %p 
+            %b A) 
+            Most of SAML related codebase will get forked/merged into 
+            %a(href="http://keycloak.org") Keycloak 
+            although with some additional polishing and refactorings. Scope of this work will be discussed in public on the project 
+            %a(href="https://lists.jboss.org/mailman/listinfo/keycloak-dev") mailing list. 
+            Our intention for PicketLink Federation / SAML part is to provide same set of capabilities in 
+            %a(href="http://keycloak.org") Keycloak 
+            in the long run. We’ll also try to make migration from PicketLink Federation into 
+            %a(href="http://keycloak.org") Keycloak 
+            based SAML IdP/SP easier with additional documentation and guidance.
+      .row-fluid
+        .span8
+          %h3 Q) What happens with Social APIs provided by PicketLink?
+          %p 
+            %b A) 
+            %a(href="http://keycloak.org") Keycloak 
+            project is already providing much greater capabilities regarding Social Login then PicketLink. 
+      .row-fluid
+        .span8
+          %h3 Q) What happens with PicketLink Java EE related capabilities
+          %p 
+            %b A) 
+            Based on experience gained with PicketLink project we’ll be introducing 
+            %a(href="http://keycloak.org") Keycloak 
+            SDK component including libraries for easier integration with Java EE applications
+      .row-fluid
+        .span8
+          %h3 Q) What happens with PicketLink IDM?
+          %p 
+            %b A) 
+            Project
+            %a(href="http://keycloak.org") Keycloak
+            is already providing out of the box IDM capabilities exposed using REST endpoints. Some parts of it - like LDAP integration - are currently based on PicketLink codebase. We’ll be integrating both efforts although exact scope of this work is not clear yet. It will be discussed in public on project 
+            %a(href="https://lists.jboss.org/mailman/listinfo/keycloak-dev") mailing list. 
+            It would be helpful if you share your view on key IDM capabilities from PicketLink you care about most.
+      .row-fluid
+        .span8
+          %h3 Q) What happens with XXXX feature from PicketLink. Will it get merged into or get covered by Keycloak? Will Keycloak provide 100% feature parity with PicketLink?
+          %p 
+            %b A) 
+            We are still discussing which parts should be incorporated into 
+            %a(href="http://keycloak.org") Keycloak
+            , in which way and in which order or priority. 
+            %a(href="http://keycloak.org") Keycloak
+            has slightly different angle focusing on providing rich out of the box security server experience instead of very flexible framework capabilities. We don’t want to compromise this key strength of the project. Some parts from PicketLink may not fit “as is” in Keycloak and may require additional refactorings or redesign. Some features from PicketLink are already covered by Keycloak - although sometimes in slightly different way. Please let us know in which parts or features are you especially interested. We’ll discuss with you and take your opinion into account!
+      .row-fluid
+        .span8
+          %h3 Q) Could you please do XXX from PicketLink differently in Keycloak? 
+          %p 
+            %b A) 
+            Let us know on the 
+            %a(href="https://lists.jboss.org/mailman/listinfo/keycloak-dev") mailing list. 
+            We would really like to hear your feedback!
+      .row-fluid
+        .span8
+          %h3 Q) Could you keep ZZZ from PicketLink in Keycloak? 
+          %p 
+            %b A) 
+            Again - please let us know and we’ll discuss. And btw. we are open for contributions! 
+      .row-fluid
+        .span8
+          %h3 Q) Will Keyclaok provide XYZ in the future? 
+          %p 
+            %b A) 
+            Please ask on the 
+            %a(href="https://lists.jboss.org/mailman/listinfo/keycloak-dev") mailing list. 
+            Our roadmap is driven by demand from the community. Really! 
+      .row-fluid
+        .span8
+          %h3 Q) Why merging PicketLink into Keycloak and not vice versa?
+          %p 
+            %b A) 
+            Any solution has several pros and cons. We strongly believe that the “out of the box security solution” nature of 
+            %a(href="http://keycloak.org") Keycloak
+            is what will fit majority of our users best in the future. Additionally PicketLink in it’s current form is primarily focused on JEE applications. 
+            %a(href="http://keycloak.org") Keycloak
+            is providing more flexibility with rich set of adapters for many different containers. We already have contributions for better node.js integration... 
+      .row-fluid
+        .span8
+          %h3 Q) Am I forced to migrate to Keycloak? Should I really?
+          %p 
+            %b A) 
+            Not forced for sure… although we strongly suggest that you give it a try. If you rely on PicketLink Federation then you should seriously consider migration to 
+            %a(href="http://keycloak.org") Keycloak
+            as this is the place where new features for it will get developed. 
+            %a(href="http://keycloak.org") Keycloak
+            is focused on delivering security related features out of the box to easily integrate or embed them into your application. At the moment it is not aiming to provide rich security framework to implement same capabilities within application on your own. Although we aim to make 
+            %a(href="http://keycloak.org") Keycloak 
+            enough pluggable or configurable to suit most needs. If you have any needs that make you want to remain on PicketLink - please let us know on the 
+            %a(href="https://lists.jboss.org/mailman/listinfo/keycloak-dev") mailing list.
+      .row-fluid
+        .span8
+          %h3 Q) Can I keep using PicketLink within my application for now but still start leveraging Keycloak?
+          %p 
+            %b A) 
+            Great question!  PicketLink allows you to extend its API in order to authenticate and consume bearer tokens issued by a third-party identity provider such as 
+            %a(href="http://keycloak.org") KeyCloak. 
+            In this case, you can use 
+            %a(href="http://keycloak.org") KeyCloak
+            to authenticate users and still use PicketLink to perform authorization decisions based on the information from these tokens.
+      .row-fluid
+        .span8
+          %h3 Q) Could I get engaged or help you any how? 
+          %p 
+            %b A) 
+            Definitely. Please let us know using the 
+            %a(href="https://lists.jboss.org/mailman/listinfo/keycloak-dev") mailing list 
+            what are you interested in. 
+

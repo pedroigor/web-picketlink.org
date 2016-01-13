@@ -1,14 +1,14 @@
 # Modeled based on https://raw.github.com/droolsjbpm/optaplanner-website/master/_config/pom.yml
 latestFinal:
-    version: 2.7.0.Final
+    version: 2.7.1.Final
 
 
 
 # latest.version can be equal to latestFinal.version
 latest:
-    version: 2.7.0.Final
+    version: 2.7.1.Final
 
 
 
 nightly:
-    version: 2.7.0-SNAPSHOT
+    version: 2.7.2.Final-SNAPSHOT

@@ -6,7 +6,13 @@ asaldhan:
   avatar: team/anil.jpg
 pedroigor:
   name: "Pedro Igor"
-  bio: "PicketLink Team Member"
+  bio: "PicketLink Project Lead"
   location: "Brasília, Brazil"
   occupation: "Senior Software Engineer"
   avatar: team/pedroigor.png
+bdaw:
+  name: "Bolesław Dawidowicz"
+  bio: "PicketLink Team Member."
+  location: "Brasília, Brazil"
+  occupation: "Red Hat/JBoss Security Platform Architect"
+  avatar: team/bolek.jpg
